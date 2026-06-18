@@ -1,0 +1,38 @@
+[Unit]
+Description=Estoque Cozinha - Gunicorn WSGI
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=notify
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/estoque
+EnvironmentFile=/opt/estoque/.env
+Environment=PATH=/opt/estoque/.venv/bin
+ExecStart=/opt/estoque/.venv/bin/gunicorn \
+    --bind 127.0.0.1:8000 \
+    --workers 3 \
+    --worker-class gthread \
+    --threads 2 \
+    --timeout 60 \
+    --keep-alive 5 \
+    --max-requests 1000 \
+    --max-requests-jitter 50 \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level info \
+    estoque.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=3
+
+# Segurança
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/estoque /opt/estoque/media /opt/estoque/staticfiles
+
+[Install]
+WantedBy=multi-user.target
