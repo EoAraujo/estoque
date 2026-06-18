@@ -1,3 +1,4 @@
+export PATH=$PATH:/usr/bin:/usr/local/bin
 #!/bin/bash
 # backup_prod.sh - Backup automatizado PostgreSQL para produção
 # Uso: ./backup_prod.sh
@@ -27,8 +28,10 @@ log "Iniciando backup do banco $DB_NAME..."
 # --if-exists: evita erro se objeto não existe
 # --no-acl: não inclui GRANT/REVOKE
 pg_dump --no-owner --clean --if-exists --no-acl \
+    -h localhost \
     -U "$DB_USER" -d "$DB_NAME" \
-    > "$BACKUP_DIR/estoque-${DATE}-pg.sql" 2>>"$BACKUP_DIR/backup_errors.log"
+    > "$BACKUP_DIR/estoque-${DATE}-pg.sql" \
+    2>>"$BACKUP_DIR/backup_errors.log"
 
 # Verifica se o dump tem tamanho razoável (>1KB)
 SIZE=$(stat -c%s "$BACKUP_DIR/estoque-${DATE}-pg.sql" 2>/dev/null || echo 0)
