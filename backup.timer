@@ -1,11 +1,9 @@
 [Unit]
-Description=Timer para backup diário do banco Estoque às 03:00
-Requires=backup.service
+Description=Timer para backup diário do banco Estoque
 
 [Timer]
-OnCalendar=daily *-*-* 03:00:00
+OnCalendar=*-*-* 03:00:00
 Persistent=true
-RandomizedDelaySec=15m
 
 [Install]
 WantedBy=timers.target

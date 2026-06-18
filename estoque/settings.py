@@ -77,7 +77,7 @@ WSGI_APPLICATION = "estoque.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / os.environ.get("DATABASE_URL", "db.sqlite3"),
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -117,10 +117,92 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Web Push (VAPID) — geradas em runtime se não definidas
+# Web Push (VAPID) — geradas em runtime ou lidas de arquivos
 VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY")
 VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY")
 VAPID_CLAIMS_SUB = os.environ.get("VAPID_CLAIMS_SUB", "mailto:admin@estoque.local")
+
+# Suporta chaves em arquivos (produção)
+VAPID_PRIVATE_KEY_FILE = os.environ.get("VAPID_PRIVATE_KEY_FILE")
+VAPID_PUBLIC_KEY_FILE = os.environ.get("VAPID_PUBLIC_KEY_FILE")
+
+def _read_vapid_key(filepath):
+    """Lê chave VAPID de arquivo."""
+    if filepath and os.path.exists(filepath):
+        with open(filepath, "r") as f:
+            return f.read().strip()
+    return None
+
+# Prioriza arquivo se existir
+if not VAPID_PRIVATE_KEY and VAPID_PRIVATE_KEY_FILE:
+    VAPID_PRIVATE_KEY = _read_vapid_key(VAPID_PRIVATE_KEY_FILE)
+if not VAPID_PUBLIC_KEY and VAPID_PUBLIC_KEY_FILE:
+    VAPID_PUBLIC_KEY = _read_vapid_key(VAPID_PUBLIC_KEY_FILE)
+
+# ============================================================================
+# Segurança para Produção (quando DEBUG=False)
+# ============================================================================
+if not DEBUG:
+    # HTTPS via nginx reverse proxy
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    # Redireciona HTTP → HTTPS
+    SECURE_SSL_REDIRECT = False  # False porque nginx já faz o redirect
+
+    # HSTS (告诉浏览器 para sempre usar HTTPS)
+    SECURE_HSTS_SECONDS = 31536000  # 1 ano
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Proteções de cookie
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = True
+
+    # Outras proteções
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_BROWSER_XSS_FILTER = True
+
+    # CSRF trusted origins (adiciona IP publico e dominio)
+    csrf_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
+    if csrf_origins:
+        CSRF_TRUSTED_ORIGINS = [f"https://{o.strip()}" for o in csrf_origins.split(",") if o.strip()]
+
+# Logging
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": os.environ.get("LOG_LEVEL", "INFO"),
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "estoque": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
 
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "core:dashboard"

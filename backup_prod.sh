@@ -1,8 +1,9 @@
-export PATH=$PATH:/usr/bin:/usr/local/bin
 #!/bin/bash
 # backup_prod.sh - Backup automatizado PostgreSQL para produção
 # Uso: ./backup_prod.sh
 # Agende no crontab: 0 3 * * * /opt/estoque/backup_prod.sh >> /opt/estoque/backups/cron.log 2>&1
+
+export PATH=$PATH:/usr/bin:/usr/local/bin:/usr/lib/postgresql/*/bin
 
 set -euo pipefail
 
@@ -27,8 +28,8 @@ log "Iniciando backup do banco $DB_NAME..."
 # --clean: inclui DROP antes de CREATE
 # --if-exists: evita erro se objeto não existe
 # --no-acl: não inclui GRANT/REVOKE
+# Nota: usa peer auth via Unix socket (sem -h) para evitar necessidade de senha
 pg_dump --no-owner --clean --if-exists --no-acl \
-    -h localhost \
     -U "$DB_USER" -d "$DB_NAME" \
     > "$BACKUP_DIR/estoque-${DATE}-pg.sql" \
     2>>"$BACKUP_DIR/backup_errors.log"
