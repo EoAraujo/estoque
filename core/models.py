@@ -137,8 +137,10 @@ class Produto(TimeStampedModel):
         ("UN", "Unidade"),
         ("CX", "Caixa"),
         ("PC", "Pacote"),
+        ("PAC", "Pacote (PAC)"),
         ("DZ", "Dúzia"),
         ("FD", "Fardo"),
+        ("ROL", "Rolo"),
     ]
 
     nome = models.CharField("Nome", max_length=200)
