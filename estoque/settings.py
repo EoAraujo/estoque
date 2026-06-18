@@ -154,9 +154,10 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-    # Proteções de cookie
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # Proteções de cookie — só Secure se HTTPS estiver ativo
+    # (muda para True após configurar Let's Encrypt)
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = True
 
@@ -169,6 +170,8 @@ if not DEBUG:
     csrf_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
     if csrf_origins:
         CSRF_TRUSTED_ORIGINS = [f"https://{o.strip()}" for o in csrf_origins.split(",") if o.strip()]
+        # Also allow HTTP for the IP (before SSL is configured)
+        CSRF_TRUSTED_ORIGINS += [f"http://{o.strip()}" for o in csrf_origins.split(",") if o.strip()]
 
 # Logging
 LOGGING = {
