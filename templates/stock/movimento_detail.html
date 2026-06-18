@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Movimento #{{ m.pk }} · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <a href="{% url 'stock:movimento_list' %}" class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200">← Movimentações</a>
+  <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Movimentação #{{ m.pk }}
+        {% if m.cancelado %}<span class="badge-neutral">Cancelada</span>{% endif %}
+      </h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ m.data_movimento|date:"d/m/Y H:i:s" }}</p>
+    </div>
+    <div class="flex gap-2">
+      {% if not m.cancelado and user.is_staff %}
+        <a href="{% url 'stock:movimento_cancelar' m.pk %}" class="btn-danger">Cancelar</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <div class="card card-body lg:col-span-2 space-y-4">
+    <div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Identificação</h2>
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Tipo</dt><dd class="font-medium">
+          {% if m.tipo == "ENTRADA" %}<span class="badge-success">Entrada</span>
+          {% else %}<span class="badge-danger">Saída</span>{% endif %}
+        </dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Motivo</dt><dd class="font-medium">{{ m.get_motivo_display }}</dd></div>
+        <div class="sm:col-span-2"><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</dt><dd class="font-medium">
+          <a href="{% url 'core:produto_detail' m.produto.pk %}" class="text-emerald-700 dark:text-emerald-300 hover:underline">{{ m.produto.nome }}</a>
+          <span class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 font-mono ml-2">{{ m.produto.codigo_interno }}</span>
+        </dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Quantidade</dt><dd class="font-mono text-lg font-semibold {% if m.tipo == 'ENTRADA' %}text-emerald-700 dark:text-emerald-300{% else %}text-red-700 dark:text-red-300{% endif %}">
+          {% if m.tipo == 'ENTRADA' %}+{% else %}-{% endif %}{{ m.quantidade }} {{ m.produto.unidade_medida }}
+        </dd></div>
+        {% if m.lote %}
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Lote</dt><dd class="font-medium">
+          {{ m.lote.numero_lote|default:"—" }}
+          {% if m.lote.data_validade %}<div class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Validade: {{ m.lote.data_validade|date:"d/m/Y" }}</div>{% endif %}
+        </dd></div>
+        {% endif %}
+      </dl>
+    </div>
+
+    {% if m.tipo == "ENTRADA" %}
+    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Dados da compra</h2>
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Fornecedor</dt><dd class="font-medium">{{ m.fornecedor|default:"—" }}</dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Nota fiscal</dt><dd class="font-mono">{{ m.nota_fiscal|default:"—" }}</dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Valor unitário</dt><dd class="font-mono">R$ {{ m.valor_unitario|default:"—"|floatformat:2 }}</dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Valor total</dt><dd class="font-mono">R$ {{ m.valor_total|default:"—"|floatformat:2 }}</dd></div>
+      </dl>
+    </div>
+    {% else %}
+    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Dados da saída</h2>
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Responsável / Setor</dt><dd class="font-medium">{{ m.responsavel|default:"—" }}</dd></div>
+      </dl>
+    </div>
+    {% endif %}
+
+    {% if m.observacoes %}
+    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Observações</h2>
+      <p class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-line">{{ m.observacoes }}</p>
+    </div>
+    {% endif %}
+
+    {% if m.cancelado %}
+    <div class="pt-4 border-t border-gray-100 dark:border-gray-700 bg-red-50 dark:bg-red-900/30 -mx-6 -mb-6 px-6 py-4 rounded-b-xl">
+      <h2 class="text-sm font-semibold text-red-700 dark:text-red-300 mb-1">Movimento cancelado</h2>
+      <p class="text-sm text-red-800 whitespace-pre-line">{{ m.motivo_cancelamento }}</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="space-y-4">
+    <div class="card card-body">
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Auditoria</h2>
+      <dl class="space-y-2 text-sm">
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Criado por</dt><dd class="font-medium">{{ m.created_by.username|default:"sistema" }}</dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Criado em</dt><dd class="font-mono text-xs">{{ m.created_at|date:"d/m/Y H:i:s" }}</dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Última atualização</dt><dd class="font-mono text-xs">{{ m.updated_at|date:"d/m/Y H:i:s" }}</dd></div>
+        <div><dt class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Atualizado por</dt><dd class="font-medium">{{ m.updated_by.username|default:"—" }}</dd></div>
+      </dl>
+    </div>
+  </div>
+</div>
+{% endblock %}

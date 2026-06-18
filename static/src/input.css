@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  [x-cloak] { display: none !important; }
+}
+
+@layer components {
+  /* Inputs com estilo consistente */
+  .form-input,
+  .form-textarea,
+  .form-select,
+  .form-multiselect {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm
+           focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm;
+  }
+  .form-checkbox,
+  .form-radio {
+    @apply rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500;
+  }
+
+  /* Botões */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold
+           transition shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  .btn-primary {
+    @apply btn bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500;
+  }
+  .btn-secondary {
+    @apply btn border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-300;
+  }
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
+  /* Tabela */
+  .table {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+  .table thead {
+    @apply bg-gray-50;
+  }
+  .table th {
+    @apply px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500;
+  }
+  .table tbody {
+    @apply divide-y divide-gray-200 bg-white;
+  }
+  .table tbody tr {
+    @apply hover:bg-gray-50;
+  }
+  .table td {
+    @apply px-6 py-3 text-sm text-gray-700;
+  }
+
+  /* Card */
+  .card {
+    @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-100;
+  }
+  .card-body {
+    @apply p-6;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-1 text-xs font-medium;
+  }
+  .badge-success { @apply badge bg-emerald-50 text-emerald-700; }
+  .badge-neutral { @apply badge bg-gray-100 text-gray-600; }
+  .badge-warning { @apply badge bg-amber-50 text-amber-700; }
+  .badge-danger  { @apply badge bg-red-50 text-red-700; }
+  .badge-info    { @apply badge bg-blue-50 text-blue-700; }
+}
+
+@layer utilities {
+  /* Scrollbars discretas */
+  .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+}

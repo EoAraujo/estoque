@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Movimentações · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Todas as movimentações</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ total_resultados }} registro(s) encontrado(s).</p>
+  </div>
+  <div class="flex gap-2">
+    <a href="{% url 'stock:entrada_create' %}" class="btn-primary">+ Entrada</a>
+    <a href="{% url 'stock:saida_create' %}" class="btn-secondary">− Saída</a>
+  </div>
+</div>
+
+<div class="card mb-4 p-4">
+  <form method="get" class="grid grid-cols-1 md:grid-cols-6 gap-3">
+    <div class="md:col-span-2">
+      <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">Buscar</label>
+      {{ form.busca }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">Tipo</label>
+      {{ form.tipo }}
+    </div>
+    <div class="md:col-span-2">
+      <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">Produto</label>
+      {{ form.produto }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">Status</label>
+      {{ form.cancelado }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">De</label>
+      {{ form.data_inicio }}
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">Até</label>
+      {{ form.data_fim }}
+    </div>
+    <div class="md:col-span-2 flex items-end gap-2">
+      <button type="submit" class="btn-primary">Filtrar</button>
+      <a href="{% url 'stock:movimento_list' %}" class="btn-secondary">Limpar</a>
+    </div>
+  </form>
+</div>
+
+<div class="overflow-x-auto card">
+  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+    <thead class="bg-gray-50 dark:bg-gray-900">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Quando</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Tipo</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Lote</th>
+        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Qtd</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Motivo</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Usuário</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Status</th>
+        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Ações</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+      {% for m in page %}
+        <tr class="hover:bg-gray-50 dark:bg-gray-900 {% if m.cancelado %}opacity-50{% endif %}">
+          <td class="whitespace-nowrap px-6 py-3 text-sm text-gray-700 dark:text-gray-200">{{ m.data_movimento|date:"d/m/Y H:i" }}</td>
+          <td class="whitespace-nowrap px-6 py-3 text-sm">
+            {% if m.tipo == "ENTRADA" %}<span class="badge-success">Entrada</span>
+            {% else %}<span class="badge-danger">Saída</span>{% endif %}
+          </td>
+          <td class="px-6 py-3 text-sm">
+            <a href="{% url 'core:produto_detail' m.produto.pk %}" class="text-gray-900 dark:text-gray-100 hover:text-emerald-700 dark:text-emerald-300 font-medium">{{ m.produto.nome }}</a>
+            <div class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 font-mono">{{ m.produto.codigo_interno }}</div>
+          </td>
+          <td class="px-6 py-3 text-sm text-gray-700 dark:text-gray-200">
+            {% if m.lote %}
+              <div>{{ m.lote.numero_lote|default:"—" }}</div>
+              {% if m.lote.data_validade %}<div class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Vence {{ m.lote.data_validade|date:"d/m/Y" }}</div>{% endif %}
+            {% else %}—{% endif %}
+          </td>
+          <td class="whitespace-nowrap px-6 py-3 text-right text-sm font-mono">
+            <span class="{% if m.tipo == 'ENTRADA' %}text-emerald-700 dark:text-emerald-300{% else %}text-red-700 dark:text-red-300{% endif %}">
+              {% if m.tipo == 'ENTRADA' %}+{% else %}-{% endif %}{{ m.quantidade }} {{ m.produto.unidade_medida }}
+            </span>
+          </td>
+          <td class="px-6 py-3 text-sm text-gray-700 dark:text-gray-200">{{ m.get_motivo_display }}</td>
+          <td class="whitespace-nowrap px-6 py-3 text-sm text-gray-700 dark:text-gray-200">{{ m.created_by.username|default:"—" }}</td>
+          <td class="whitespace-nowrap px-6 py-3 text-sm">
+            {% if m.cancelado %}<span class="badge-neutral">Cancelado</span>
+            {% else %}<span class="badge-success">Ativo</span>{% endif %}
+          </td>
+          <td class="whitespace-nowrap px-6 py-3 text-right text-sm">
+            <a href="{% url 'stock:movimento_detail' m.pk %}" class="text-emerald-700 dark:text-emerald-300 hover:underline">Ver</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="9" class="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Nenhuma movimentação encontrada.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page.has_other_pages %}
+<nav class="mt-4 flex items-center justify-end gap-2">
+  {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&{{ request.GET.urlencode }}" class="btn-secondary">Anterior</a>{% endif %}
+  <span class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Página {{ page.number }} de {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a href="?page={{ page.next_page_number }}&{{ request.GET.urlencode }}" class="btn-secondary">Próxima</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

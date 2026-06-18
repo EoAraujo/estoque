@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard · {{ app_name }}{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Visão gerencial do estoque. Olá, <span class="font-medium text-gray-800 dark:text-gray-200">{{ user.first_name|default:user.username }}</span>!</p>
+  </div>
+
+  {# Seletor de período (configurável por usuário; persiste em UserProfile) #}
+  <form method="get" class="flex items-center gap-2 text-sm">
+    <label for="periodo" class="text-gray-500 dark:text-gray-400 dark:text-gray-500">Período:</label>
+    <select name="periodo" id="periodo" onchange="this.form.submit()"
+            class="rounded-md border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+      {% for dias, label in periodo_choices %}
+        <option value="{{ dias }}" {% if dias == periodo_dias %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <noscript><button type="submit" class="rounded-md bg-gray-200 px-2 py-1 text-xs">OK</button></noscript>
+  </form>
+</div>
+
+{# ============== KPIs (linha 1) ============== #}
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-4">
+  <div class="card card-body">
+    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Valor em estoque</p>
+    <p class="mt-1 text-2xl font-bold text-emerald-700 dark:text-emerald-300">R$ {{ valor_total_estoque|floatformat:2 }}</p>
+    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ total_produtos }} produto{{ total_produtos|pluralize:"s" }} ativo{{ total_produtos|pluralize:"s" }}</p>
+  </div>
+  <div class="card card-body">
+    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Movs. no período</p>
+    <p class="mt-1 text-3xl font-semibold text-gray-900 dark:text-gray-100">
+      {{ total_entradas_periodo|add:total_saidas_periodo }}
+    </p>
+    <p class="mt-1 text-xs">
+      <span class="text-emerald-700 dark:text-emerald-300 font-medium">+{{ total_entradas_periodo }}</span>
+      <span class="text-gray-400 dark:text-gray-500 mx-1">/</span>
+      <span class="text-red-600 font-medium">−{{ total_saidas_periodo }}</span>
+      <span class="text-gray-500 dark:text-gray-400 dark:text-gray-500"> entradas / saídas</span>
+    </p>
+  </div>
+  <div class="card card-body">
+    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Estoque baixo</p>
+    <p class="mt-1 text-3xl font-semibold {% if faixas_count.critico %}text-red-600{% else %}text-gray-900 dark:text-gray-100{% endif %}">
+      {{ faixas_count.critico }}
+    </p>
+    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">produtos com cobertura &le; 7 dias</p>
+  </div>
+  <div class="card card-body">
+    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Vencendo / Vencidos</p>
+    <p class="mt-1 text-3xl font-semibold {% if lotes_vencidos_qty %}text-red-600{% elif lotes_vencendo_qty %}text-amber-600{% else %}text-gray-900 dark:text-gray-100{% endif %}">
+      {{ lotes_vencendo_qty }} / {{ lotes_vencidos_qty }}
+    </p>
+    <a href="{% url 'stock:home' %}" class="mt-1 inline-block text-xs text-emerald-700 dark:text-emerald-300 hover:underline">Ver lotes →</a>
+  </div>
+</div>
+
+{# ============== Gráfico + ações rápidas ============== #}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+  <div class="card lg:col-span-2">
+    <div class="card-body">
+      <div class="flex items-start justify-between mb-3 flex-wrap gap-2">
+        <div>
+          <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">Dias de cobertura do estoque</h2>
+          <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Para quantos dias o estoque atual deve durar, considerando o consumo médio.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="inline-flex items-center gap-1 rounded-full bg-red-50 dark:bg-red-900/30 px-2 py-1 font-medium text-red-700 dark:text-red-300">
+            <span class="h-2 w-2 rounded-full bg-red-600"></span>0–7 Crítico: {{ faixas_count.critico }}
+          </span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-900/30 px-2 py-1 font-medium text-amber-700 dark:text-amber-300">
+            <span class="h-2 w-2 rounded-full bg-amber-600"></span>8–15 Atenção: {{ faixas_count.atencao }}
+          </span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 font-medium text-emerald-700 dark:text-emerald-300">
+            <span class="h-2 w-2 rounded-full bg-emerald-600"></span>16–30 Normal: {{ faixas_count.normal }}
+          </span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-900/30 px-2 py-1 font-medium text-blue-700 dark:text-blue-300">
+            <span class="h-2 w-2 rounded-full bg-blue-600"></span>&gt;30 Excesso: {{ faixas_count.excesso }}
+          </span>
+        </div>
+      </div>
+
+      {% if chart_labels %}
+        <div class="relative" style="height: 360px;">
+          <canvas id="chartCobertura"></canvas>
+        </div>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Mostrando top {{ chart_labels|length }} produtos com consumo registrado.</p>
+      {% else %}
+        <div class="rounded-md bg-gray-50 dark:bg-gray-900 p-8 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+          Sem dados de consumo no momento. Registre algumas saídas para gerar o gráfico.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <div class="card card-body">
+      <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Ações rápidas</h2>
+      <div class="space-y-2">
+        <a href="{% url 'stock:entrada_create' %}" class="block w-full text-left rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm hover:bg-gray-50 dark:bg-gray-900">
+          <span class="text-emerald-700 dark:text-emerald-300 font-medium">+</span> Registrar entrada
+        </a>
+        <a href="{% url 'stock:saida_create' %}" class="block w-full text-left rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm hover:bg-gray-50 dark:bg-gray-900">
+          <span class="text-red-600 font-medium">−</span> Registrar saída
+        </a>
+        <a href="{% url 'stock:ajuste_create' %}" class="block w-full text-left rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm hover:bg-gray-50 dark:bg-gray-900">
+          <span class="text-amber-600 font-medium">⚖</span> Ajuste de inventário
+        </a>
+        <a href="{% url 'intelligence:home' %}" class="block w-full text-left rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm hover:bg-gray-50 dark:bg-gray-900">
+          <span class="text-blue-600 font-medium">📊</span> Inteligência
+        </a>
+      </div>
+    </div>
+
+    <div class="card card-body">
+      <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Relatórios</h2>
+      <div class="space-y-2 text-sm">
+        <a href="{% url 'reports:movimentacoes_xlsx' %}?periodo={{ periodo_dias }}" class="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 hover:bg-gray-50 dark:bg-gray-900">
+          <span>Movimentações (.xlsx)</span>
+          <span class="text-emerald-700 dark:text-emerald-300">↓</span>
+        </a>
+        <a href="{% url 'reports:estoque_xlsx' %}" class="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 hover:bg-gray-50 dark:bg-gray-900">
+          <span>Posição de estoque (.xlsx)</span>
+          <span class="text-emerald-700 dark:text-emerald-300">↓</span>
+        </a>
+        <a href="{% url 'reports:validade_pdf' %}" class="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 hover:bg-gray-50 dark:bg-gray-900">
+          <span>Validade (.pdf)</span>
+          <span class="text-emerald-700 dark:text-emerald-300">↓</span>
+        </a>
+        <a href="{% url 'reports:auditoria_xlsx' %}?periodo={{ periodo_dias }}" class="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 hover:bg-gray-50 dark:bg-gray-900">
+          <span>Auditoria (.xlsx)</span>
+          <span class="text-emerald-700 dark:text-emerald-300">↓</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ============== Últimas movimentações + estoque baixo ============== #}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <div class="card lg:col-span-2">
+    <div class="card-body">
+      <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Últimas movimentações</h2>
+      {% if ultimas_movs %}
+        <div class="overflow-x-auto -mx-6">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-900">
+              <tr>
+                <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Quando</th>
+                <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Tipo</th>
+                <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</th>
+                <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Qtd</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+              {% for m in ultimas_movs %}
+                <tr class="hover:bg-gray-50 dark:bg-gray-900">
+                  <td class="whitespace-nowrap px-6 py-2 text-sm text-gray-700 dark:text-gray-200">{{ m.data_movimento|date:"d/m H:i" }}</td>
+                  <td class="px-6 py-2 text-sm">
+                    {% if m.tipo == "ENTRADA" %}<span class="badge-success">Entrada</span>
+                    {% elif m.tipo == "SAIDA" %}<span class="badge-danger">Saída</span>
+                    {% else %}<span class="badge-neutral">{{ m.get_tipo_display }}</span>{% endif %}
+                  </td>
+                  <td class="px-6 py-2 text-sm"><a href="{% url 'core:produto_detail' m.produto.pk %}" class="text-gray-900 dark:text-gray-100 hover:text-emerald-700 dark:text-emerald-300">{{ m.produto.nome }}</a></td>
+                  <td class="px-6 py-2 text-right text-sm font-mono {% if m.tipo == 'ENTRADA' %}text-emerald-700 dark:text-emerald-300{% elif m.tipo == 'SAIDA' %}text-red-700 dark:text-red-300{% else %}text-gray-700 dark:text-gray-200{% endif %}">
+                    {% if m.tipo == 'ENTRADA' %}+{% elif m.tipo == 'SAIDA' %}-{% endif %}{{ m.quantidade }} {{ m.produto.unidade_medida }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <a href="{% url 'stock:movimento_list' %}" class="mt-3 inline-block text-sm text-emerald-700 dark:text-emerald-300 hover:underline">Ver todas →</a>
+      {% else %}
+        <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Nenhuma movimentação registrada ainda.</p>
+        <a href="{% url 'stock:entrada_create' %}" class="mt-3 inline-block btn-primary">Registrar primeira entrada</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {% if produtos_estoque_baixo %}
+    <div class="card card-body border-l-4 border-amber-500">
+      <h2 class="text-sm font-semibold text-amber-700 dark:text-amber-300 mb-2">Estoque abaixo do mínimo</h2>
+      <ul class="space-y-2">
+        {% for p in produtos_estoque_baixo %}
+          <li class="text-sm">
+            <a href="{% url 'core:produto_detail' p.pk %}" class="font-medium text-gray-900 dark:text-gray-100 hover:underline">{{ p.nome }}</a>
+            <div class="text-xs text-amber-700 dark:text-amber-300">
+              {{ p.quantidade_atual }} / {{ p.estoque_minimo }} {{ p.unidade_medida }}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if chart_labels %}
+{{ chart_labels|json_script:"chartLabels" }}
+{{ chart_data|json_script:"chartData" }}
+{{ chart_cores|json_script:"chartCores" }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('chartCobertura');
+    if (!ctx) return;
+    const labels = JSON.parse(document.getElementById('chartLabels').textContent);
+    const data = JSON.parse(document.getElementById('chartData').textContent);
+    const cores = JSON.parse(document.getElementById('chartCores').textContent);
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Dias de cobertura',
+          data: data,
+          backgroundColor: cores,
+          borderRadius: 4,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterLabel: function(ctx) {
+                return 'Cobertura: ' + ctx.parsed.x + ' dias';
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            title: { display: true, text: 'Dias' },
+            grid: { color: 'rgba(0,0,0,0.05)' },
+          },
+          y: {
+            grid: { display: false },
+            ticks: { font: { size: 11 } },
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endif %}
+{% endblock %}

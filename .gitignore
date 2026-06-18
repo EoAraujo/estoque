@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Django
+*.log
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Node
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Backups
+*.bak
+*.backup
+backups/
+
+# Screenshots temporários
+screens/
