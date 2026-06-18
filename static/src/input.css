@@ -43,6 +43,30 @@
     @apply border-surface-500 bg-surface-300;
   }
 
+  /* Catch-all: Django form widgets don't always have .form-input */
+  .dark input[type="text"],
+  .dark input[type="email"],
+  .dark input[type="password"],
+  .dark input[type="number"],
+  .dark input[type="url"],
+  .dark input[type="tel"],
+  .dark input[type="date"],
+  .dark input[type="search"],
+  .dark input:not([type]),
+  .dark select,
+  .dark textarea {
+    @apply block w-full rounded-lg border border-surface-500 bg-surface-300
+           px-3 py-2 text-sm text-gray-200 placeholder-surface-600
+           shadow-sm transition-colors
+           focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none;
+  }
+
+  .dark input:disabled,
+  .dark select:disabled,
+  .dark textarea:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
   /* ====================================================================
      BOTÕES
      ==================================================================== */
