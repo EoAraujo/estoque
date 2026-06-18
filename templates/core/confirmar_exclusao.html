@@ -2,14 +2,14 @@
 {% block title %}Confirmar exclusão · {{ app_name }}{% endblock %}
 
 {% block content %}
-<div class="rounded-xl bg-white dark:bg-gray-800 p-8 shadow-sm ring-1 ring-gray-100 max-w-lg">
-  <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">Confirmar exclusão</h1>
-  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-    Tem certeza que deseja excluir <strong>{{ object }}</strong>? Esta ação não pode ser desfeita.
+<div class="card p-8 max-w-lg">
+  <h1 class="text-xl font-bold text-gray-100">Confirmar exclusão</h1>
+  <p class="mt-2 text-sm text-gray-400">
+    Tem certeza que deseja excluir <strong class="text-gray-200">{{ object }}</strong>? Esta ação não pode ser desfeita.
   </p>
   <form method="post" class="mt-6 flex justify-end gap-2">
     {% csrf_token %}
-    <a href="{{ request.META.HTTP_REFERER|default:'/' }}" class="rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:bg-gray-900">Cancelar</a>
+    <a href="{{ request.META.HTTP_REFERER|default:'/' }}" class="btn-secondary">Cancelar</a>
     <button type="submit" class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Sim, excluir</button>
   </form>
 </div>

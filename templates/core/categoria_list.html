@@ -4,49 +4,49 @@
 {% block content %}
 <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
   <div>
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Categorias</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Classifique seus produtos para facilitar buscas e relatórios.</p>
+    <h1 class="text-2xl font-bold text-gray-100">Categorias</h1>
+    <p class="text-sm text-surface-800">Classifique seus produtos para facilitar buscas e relatórios.</p>
   </div>
-  <a href="{% url 'core:categoria_create' %}" class="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
+  <a href="{% url 'core:categoria_create' %}" class="btn-primary">
     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
     Nova categoria
   </a>
 </div>
 
-<div class="overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-sm ring-1 ring-gray-100">
-  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-    <thead class="bg-gray-50 dark:bg-gray-900">
+<div class="overflow-hidden rounded-xl card">
+  <table class="min-w-full divide-y divide-surface-400">
+    <thead class="bg-surface-100">
       <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Cor</th>
-        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Nome</th>
-        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Descrição</th>
-        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Status</th>
-        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Ações</th>
+        <th class="px-6 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Cor</th>
+        <th class="px-6 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Nome</th>
+        <th class="px-6 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Descrição</th>
+        <th class="px-6 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Status</th>
+        <th class="px-6 py-3 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Ações</th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+    <tbody class="divide-y divide-surface-400 bg-surface-200">
       {% for c in categorias %}
-        <tr class="hover:bg-gray-50 dark:bg-gray-900">
+        <tr class="hover:bg-surface-300 transition-colors">
           <td class="whitespace-nowrap px-6 py-3">
             {% if c.cor %}
-              <span class="inline-block h-6 w-6 rounded border border-gray-200 dark:border-gray-700" style="background:{{ c.cor }}"></span>
+              <span class="inline-block h-6 w-6 rounded border border-surface-500" style="background:{{ c.cor }}"></span>
             {% else %}
-              <span class="inline-block h-6 w-6 rounded border border-dashed border-gray-300"></span>
+              <span class="inline-block h-6 w-6 rounded border border-dashed border-surface-600"></span>
             {% endif %}
           </td>
-          <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{{ c.nome }}</td>
-          <td class="px-6 py-3 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ c.descricao|default:"—"|truncatechars:60 }}</td>
+          <td class="px-6 py-3 text-sm font-medium text-gray-300">{{ c.nome }}</td>
+          <td class="px-6 py-3 text-sm text-surface-800">{{ c.descricao|default:"—"|truncatechars:60 }}</td>
           <td class="whitespace-nowrap px-6 py-3 text-sm">
-            {% if c.ativa %}<span class="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">Ativa</span>
-            {% else %}<span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">Inativa</span>{% endif %}
+            {% if c.ativa %}<span class="badge-success badge-dot">Ativa</span>
+            {% else %}<span class="badge-neutral">Inativa</span>{% endif %}
           </td>
           <td class="whitespace-nowrap px-6 py-3 text-right text-sm">
-            <a href="{% url 'core:categoria_update' c.pk %}" class="text-emerald-700 dark:text-emerald-300 hover:underline">Editar</a>
-            <a href="{% url 'core:categoria_delete' c.pk %}" class="ml-3 text-red-600 hover:underline">Excluir</a>
+            <a href="{% url 'core:categoria_update' c.pk %}" class="text-emerald-400 hover:text-emerald-300 hover:underline">Editar</a>
+            <a href="{% url 'core:categoria_delete' c.pk %}" class="ml-3 text-red-400 hover:text-red-300 hover:underline">Excluir</a>
           </td>
         </tr>
       {% empty %}
-        <tr><td colspan="5" class="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Nenhuma categoria cadastrada.</td></tr>
+        <tr><td colspan="5" class="px-6 py-10 text-center text-sm text-surface-800">Nenhuma categoria cadastrada.</td></tr>
       {% endfor %}
     </tbody>
   </table>

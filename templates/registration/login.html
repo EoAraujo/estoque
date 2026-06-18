@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Entrar · {{ app_name }}{% endblock %}
 {% block anon %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-100 px-4">
+<div class="min-h-screen flex items-center justify-center bg-surface-100 px-4">
   <div class="w-full max-w-md">
     <div class="text-center mb-6">
       <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white text-2xl font-bold shadow-lg">EC</span>
-      <h1 class="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">Estoque Cozinha</h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Sistema de gestão de estoque para cozinha industrial</p>
+      <h1 class="mt-4 text-2xl font-bold text-gray-100">Estoque Cozinha</h1>
+      <p class="text-sm text-surface-800">Sistema de gestão de estoque para cozinha industrial</p>
     </div>
 
-    <div class="rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-xl ring-1 ring-gray-100">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">Acessar o sistema</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-6">Use seu login e senha para entrar.</p>
+    <div class="card p-8">
+      <h2 class="text-lg font-semibold text-gray-100 mb-1">Acessar o sistema</h2>
+      <p class="text-sm text-surface-800 mb-6">Use seu login e senha para entrar.</p>
 
       {% if form.non_field_errors %}
-        <div class="mb-4 rounded-md border border-red-300 bg-red-50 dark:bg-red-900/30 px-4 py-3 text-sm text-red-800">
+        <div class="mb-4 rounded-md border border-red-800/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
           {{ form.non_field_errors|join:" " }}
         </div>
       {% endif %}
@@ -22,22 +22,22 @@
       <form method="post" class="space-y-4">
         {% csrf_token %}
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Usuário</label>
+          <label class="block text-sm font-medium text-gray-300">Usuário</label>
           {{ form.username }}
-          {% if form.username.errors %}<p class="mt-1 text-xs text-red-600">{{ form.username.errors|join:" " }}</p>{% endif %}
+          {% if form.username.errors %}<p class="mt-1 text-xs text-red-400">{{ form.username.errors|join:" " }}</p>{% endif %}
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Senha</label>
+          <label class="block text-sm font-medium text-gray-300">Senha</label>
           {{ form.password }}
-          {% if form.password.errors %}<p class="mt-1 text-xs text-red-600">{{ form.password.errors|join:" " }}</p>{% endif %}
+          {% if form.password.errors %}<p class="mt-1 text-xs text-red-400">{{ form.password.errors|join:" " }}</p>{% endif %}
         </div>
-        <button type="submit" class="w-full rounded-md bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+        <button type="submit" class="w-full rounded-md bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-surface-100">
           Entrar
         </button>
       </form>
     </div>
 
-    <p class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
+    <p class="mt-6 text-center text-xs text-surface-600">
       {% if config_sistema.empresa_nome %}{{ config_sistema.empresa_nome }}{% else %}Sistema de Gestão{% endif %} · v0.1
     </p>
   </div>

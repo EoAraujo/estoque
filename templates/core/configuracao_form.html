@@ -3,46 +3,46 @@
 
 {% block content %}
 <div class="mb-6">
-  <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Configurações do sistema</h1>
-  <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Defina dados da empresa e regras usadas pelo motor de inteligência.</p>
+  <h1 class="text-2xl font-bold text-gray-100">Configurações do sistema</h1>
+  <p class="text-sm text-surface-800">Defina dados da empresa e regras usadas pelo motor de inteligência.</p>
 </div>
 
-<div class="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-sm ring-1 ring-gray-100 max-w-3xl">
+<div class="card p-6 max-w-3xl">
   <form method="post" class="space-y-6">
     {% csrf_token %}
-    {% if form.non_field_errors %}<div class="rounded-md bg-red-50 dark:bg-red-900/30 border border-red-200 px-4 py-3 text-sm text-red-800">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+    {% if form.non_field_errors %}<div class="rounded-md bg-red-900/20 border border-red-800/30 px-4 py-3 text-sm text-red-400">{{ form.non_field_errors|join:" " }}</div>{% endif %}
 
     <div>
-      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Empresa</h2>
+      <h2 class="text-sm font-semibold text-gray-100 mb-3">Empresa</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nome</label>{{ form.empresa_nome }}</div>
-        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">CNPJ</label>{{ form.empresa_cnpj }}</div>
-        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Telefone</label>{{ form.empresa_telefone }}</div>
-        <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Endereço</label>{{ form.empresa_endereco }}</div>
+        <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-300">Nome</label>{{ form.empresa_nome }}</div>
+        <div><label class="block text-sm font-medium text-gray-300">CNPJ</label>{{ form.empresa_cnpj }}</div>
+        <div><label class="block text-sm font-medium text-gray-300">Telefone</label>{{ form.empresa_telefone }}</div>
+        <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-300">Endereço</label>{{ form.empresa_endereco }}</div>
       </div>
     </div>
 
     <div>
-      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Alertas de validade (em dias)</h2>
+      <h2 class="text-sm font-semibold text-gray-100 mb-3">Alertas de validade (em dias)</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">30 dias</label>{{ form.alerta_vencimento_30 }}</div>
-        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">15 dias</label>{{ form.alerta_vencimento_15 }}</div>
-        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">7 dias</label>{{ form.alerta_vencimento_7 }}</div>
-        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-200">3 dias</label>{{ form.alerta_vencimento_3 }}</div>
+        <div><label class="block text-sm font-medium text-gray-300">30 dias</label>{{ form.alerta_vencimento_30 }}</div>
+        <div><label class="block text-sm font-medium text-gray-300">15 dias</label>{{ form.alerta_vencimento_15 }}</div>
+        <div><label class="block text-sm font-medium text-gray-300">7 dias</label>{{ form.alerta_vencimento_7 }}</div>
+        <div><label class="block text-sm font-medium text-gray-300">3 dias</label>{{ form.alerta_vencimento_3 }}</div>
       </div>
     </div>
 
     <div>
-      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Inteligência</h2>
+      <h2 class="text-sm font-semibold text-gray-100 mb-3">Inteligência</h2>
       <div class="max-w-xs">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Janela de cálculo de consumo (dias)</label>
+        <label class="block text-sm font-medium text-gray-300">Janela de cálculo de consumo (dias)</label>
         {{ form.janela_consumo_dias }}
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Período usado para calcular consumo médio (ex: 30 dias).</p>
+        <p class="mt-1 text-xs text-surface-800">Período usado para calcular consumo médio (ex: 30 dias).</p>
       </div>
     </div>
 
-    <div class="flex justify-end pt-4 border-t border-gray-100 dark:border-gray-700">
-      <button type="submit" class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Salvar configurações</button>
+    <div class="flex justify-end pt-4 border-t border-surface-400">
+      <button type="submit" class="btn-primary">Salvar configurações</button>
     </div>
   </form>
 </div>

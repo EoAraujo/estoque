@@ -4,8 +4,8 @@
 {% block content %}
 <div class="mb-6 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
   <div>
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Inteligência de Estoque</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+    <h1 class="text-2xl font-bold text-gray-100">Inteligência de Estoque</h1>
+    <p class="text-sm text-surface-800">
       Análise preditiva calculada em {{ hoje|date:"d/m/Y" }} · janela de consumo de {{ janela_consumo }} dias.
     </p>
   </div>
@@ -15,83 +15,83 @@
   </div>
 </div>
 
-{# ============== KPIs ============== #}
+{# KPIs #}
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Ruptura iminente</p>
-    <p class="mt-1 text-3xl font-semibold {% if rupturas_count %}text-red-600{% else %}text-gray-900 dark:text-gray-100{% endif %}">
+  <div class="stat-card">
+    <p class="stat-label">Ruptura iminente</p>
+    <p class="text-3xl font-semibold {% if rupturas_count %}text-red-400{% else %}text-gray-100{% endif %}">
       {{ rupturas_count }}
     </p>
-    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">produtos com estoque para &le; {{ config.alerta_vencimento_30 }} dias</p>
+    <p class="mt-1 text-xs text-surface-800">produtos com estoque para ≤ {{ config.alerta_vencimento_30 }} dias</p>
   </div>
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Estoque abaixo do mínimo</p>
-    <p class="mt-1 text-3xl font-semibold {% if estoque_baixo_count %}text-amber-600{% else %}text-gray-900 dark:text-gray-100{% endif %}">
+  <div class="stat-card">
+    <p class="stat-label">Estoque abaixo do mínimo</p>
+    <p class="text-3xl font-semibold {% if estoque_baixo_count %}text-amber-400{% else %}text-gray-100{% endif %}">
       {{ estoque_baixo_count }}
     </p>
-    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">produtos que precisam de reposição imediata</p>
+    <p class="mt-1 text-xs text-surface-800">produtos que precisam de reposição imediata</p>
   </div>
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Valor a comprar</p>
-    <p class="mt-1 text-2xl font-bold {% if valor_total_sugestoes %}text-emerald-700 dark:text-emerald-300{% else %}text-gray-900 dark:text-gray-100{% endif %}">
+  <div class="stat-card">
+    <p class="stat-label">Valor a comprar</p>
+    <p class="text-2xl font-bold {% if valor_total_sugestoes %}text-emerald-400{% else %}text-gray-100{% endif %}">
       R$ {{ valor_total_sugestoes|floatformat:2 }}
     </p>
-    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">para {{ sugestoes_count }} produto{{ sugestoes_count|pluralize:"s" }} atingirem o estoque ideal</p>
+    <p class="mt-1 text-xs text-surface-800">para {{ sugestoes_count }} produto{{ sugestoes_count|pluralize:"s" }} atingirem o estoque ideal</p>
   </div>
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Capital em excesso</p>
-    <p class="mt-1 text-2xl font-bold {% if valor_total_excesso %}text-blue-700 dark:text-blue-300{% else %}text-gray-900 dark:text-gray-100{% endif %}">
+  <div class="stat-card">
+    <p class="stat-label">Capital em excesso</p>
+    <p class="text-2xl font-bold {% if valor_total_excesso %}text-blue-400{% else %}text-gray-100{% endif %}">
       R$ {{ valor_total_excesso|floatformat:2 }}
     </p>
-    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">em {{ excessos_count }} produto{{ excessos_count|pluralize:"s" }} acima de 20% do ideal</p>
+    <p class="mt-1 text-xs text-surface-800">em {{ excessos_count }} produto{{ excessos_count|pluralize:"s" }} acima de 20% do ideal</p>
   </div>
 </div>
 
-{# ============== Ruptura iminente ============== #}
+{# Ruptura iminente #}
 <div class="card mb-6">
   <div class="card-body">
     <div class="flex items-center justify-between mb-3">
       <div>
-        <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">Ruptura iminente</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Produtos cujo estoque zera nos próximos {{ config.alerta_vencimento_30 }} dias, considerando o consumo médio.</p>
+        <h2 class="text-base font-semibold text-gray-100">Ruptura iminente</h2>
+        <p class="text-xs text-surface-800">Produtos cujo estoque zera nos próximos {{ config.alerta_vencimento_30 }} dias, considerando o consumo médio.</p>
       </div>
       {% if rupturas_count %}<span class="badge-danger">{{ rupturas_count }}</span>{% endif %}
     </div>
     {% if rupturas %}
       <div class="overflow-x-auto -mx-6">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-900">
+        <table class="min-w-full divide-y divide-surface-400">
+          <thead class="bg-surface-100">
             <tr>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</th>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Categoria</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Estoque</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Dias restantes</th>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Ruptura estimada</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Ação</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Produto</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Categoria</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Estoque</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Dias restantes</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Ruptura estimada</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Ação</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+          <tbody class="divide-y divide-surface-400 bg-surface-200">
             {% for p, dias, data_rup in rupturas %}
-              <tr class="hover:bg-gray-50 dark:bg-gray-900">
+              <tr class="hover:bg-surface-300 transition-colors">
                 <td class="px-6 py-2 text-sm">
-                  <a href="{% url 'core:produto_detail' p.pk %}" class="font-medium text-gray-900 dark:text-gray-100 hover:text-emerald-700 dark:text-emerald-300">{{ p.nome }}</a>
-                  <div class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 font-mono">{{ p.codigo_interno }}</div>
+                  <a href="{% url 'core:produto_detail' p.pk %}" class="font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ p.nome }}</a>
+                  <div class="text-xs text-surface-800 font-mono">{{ p.codigo_interno }}</div>
                 </td>
-                <td class="px-6 py-2 text-sm text-gray-700 dark:text-gray-200">
+                <td class="px-6 py-2 text-sm text-gray-400">
                   {% if p.categoria.cor %}<span class="inline-block h-2 w-2 rounded-full mr-1" style="background:{{ p.categoria.cor }}"></span>{% endif %}
                   {{ p.categoria.nome }}
                 </td>
-                <td class="px-6 py-2 text-sm text-right text-gray-700 dark:text-gray-200 font-mono">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
+                <td class="px-6 py-2 text-sm text-right text-gray-400 font-mono">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
                 <td class="px-6 py-2 text-sm text-right">
                   <span class="badge {% if dias <= 3 %}badge-danger{% elif dias <= 7 %}badge-warning{% else %}badge-info{% endif %}">
                     {{ dias }} dia{{ dias|pluralize:"s" }}
                   </span>
                 </td>
-                <td class="px-6 py-2 text-sm text-gray-700 dark:text-gray-200">
+                <td class="px-6 py-2 text-sm text-gray-400">
                   {% if data_rup %}{{ data_rup|date:"d/m/Y" }}{% else %}—{% endif %}
                 </td>
                 <td class="px-6 py-2 text-right text-sm">
-                  <a href="{% url 'stock:entrada_create' %}?produto={{ p.pk }}" class="text-emerald-700 dark:text-emerald-300 hover:underline">Repor</a>
+                  <a href="{% url 'stock:entrada_create' %}?produto={{ p.pk }}" class="text-emerald-400 hover:text-emerald-300 hover:underline">Repor</a>
                 </td>
               </tr>
             {% endfor %}
@@ -99,20 +99,20 @@
         </table>
       </div>
     {% else %}
-      <div class="rounded-md bg-emerald-50 dark:bg-emerald-900/30 p-4 text-sm text-emerald-800">
+      <div class="rounded-md bg-emerald-900/20 border border-emerald-800/30 p-4 text-sm text-emerald-400">
         Nenhum produto em risco de ruptura nos próximos {{ config.alerta_vencimento_30 }} dias.
       </div>
     {% endif %}
   </div>
 </div>
 
-{# ============== Sugestões de compra ============== #}
+{# Sugestões de compra #}
 <div class="card mb-6">
   <div class="card-body">
     <div class="flex items-center justify-between mb-3">
       <div>
-        <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">Sugestões de compra</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Quantidade calculada para reabastecer até o <strong>estoque ideal</strong>, usando o valor médio unitário.</p>
+        <h2 class="text-base font-semibold text-gray-100">Sugestões de compra</h2>
+        <p class="text-xs text-surface-800">Quantidade calculada para reabastecer até o <strong class="text-gray-300">estoque ideal</strong>, usando o valor médio unitário.</p>
       </div>
       {% if sugestoes_count %}
         <span class="badge-info">R$ {{ valor_total_sugestoes|floatformat:2 }}</span>
@@ -120,47 +120,47 @@
     </div>
     {% if sugestoes %}
       <div class="overflow-x-auto -mx-6">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-900">
+        <table class="min-w-full divide-y divide-surface-400">
+          <thead class="bg-surface-100">
             <tr>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</th>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Fornecedor</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Estoque</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Ideal</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Comprar</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Valor estimado</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Produto</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Fornecedor</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Estoque</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Ideal</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Comprar</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Valor estimado</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+          <tbody class="divide-y divide-surface-400 bg-surface-200">
             {% for p, qtd, valor in sugestoes %}
-              <tr class="hover:bg-gray-50 dark:bg-gray-900">
+              <tr class="hover:bg-surface-300 transition-colors">
                 <td class="px-6 py-2 text-sm">
-                  <a href="{% url 'core:produto_detail' p.pk %}" class="font-medium text-gray-900 dark:text-gray-100 hover:text-emerald-700 dark:text-emerald-300">{{ p.nome }}</a>
-                  <div class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 font-mono">{{ p.codigo_interno }}</div>
+                  <a href="{% url 'core:produto_detail' p.pk %}" class="font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ p.nome }}</a>
+                  <div class="text-xs text-surface-800 font-mono">{{ p.codigo_interno }}</div>
                 </td>
-                <td class="px-6 py-2 text-sm text-gray-700 dark:text-gray-200">
+                <td class="px-6 py-2 text-sm text-gray-400">
                   {% if p.fornecedor_principal %}{{ p.fornecedor_principal.nome_fantasia|default:p.fornecedor_principal.nome }}
-                  {% else %}<span class="text-gray-400 dark:text-gray-500">—</span>{% endif %}
+                  {% else %}<span class="text-surface-600">—</span>{% endif %}
                 </td>
-                <td class="px-6 py-2 text-sm text-right text-gray-700 dark:text-gray-200 font-mono">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
-                <td class="px-6 py-2 text-sm text-right text-gray-700 dark:text-gray-200 font-mono">{{ p.estoque_ideal }} {{ p.unidade_medida }}</td>
-                <td class="px-6 py-2 text-sm text-right font-mono font-semibold text-emerald-700 dark:text-emerald-300">
+                <td class="px-6 py-2 text-sm text-right text-gray-400 font-mono">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
+                <td class="px-6 py-2 text-sm text-right text-gray-400 font-mono">{{ p.estoque_ideal }} {{ p.unidade_medida }}</td>
+                <td class="px-6 py-2 text-sm text-right font-mono font-semibold text-emerald-400">
                   +{{ qtd }} {{ p.unidade_medida }}
                 </td>
-                <td class="px-6 py-2 text-sm text-right font-mono">R$ {{ valor|floatformat:2 }}</td>
+                <td class="px-6 py-2 text-sm text-right font-mono text-gray-300">R$ {{ valor|floatformat:2 }}</td>
               </tr>
             {% endfor %}
           </tbody>
-          <tfoot class="bg-gray-50 dark:bg-gray-900">
+          <tfoot class="bg-surface-100">
             <tr>
-              <td colspan="5" class="px-6 py-2 text-right text-sm font-semibold text-gray-700 dark:text-gray-200">Total</td>
-              <td class="px-6 py-2 text-right text-sm font-mono font-bold text-emerald-700 dark:text-emerald-300">R$ {{ valor_total_sugestoes|floatformat:2 }}</td>
+              <td colspan="5" class="px-6 py-2 text-right text-sm font-semibold text-gray-400">Total</td>
+              <td class="px-6 py-2 text-right text-sm font-mono font-bold text-emerald-400">R$ {{ valor_total_sugestoes|floatformat:2 }}</td>
             </tr>
           </tfoot>
         </table>
       </div>
     {% else %}
-      <div class="rounded-md bg-emerald-50 dark:bg-emerald-900/30 p-4 text-sm text-emerald-800">
+      <div class="rounded-md bg-emerald-900/20 border border-emerald-800/30 p-4 text-sm text-emerald-400">
         Todos os produtos estão no estoque ideal.
       </div>
     {% endif %}
@@ -168,97 +168,97 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-  {# ============== Anomalias de consumo ============== #}
+  {# Anomalias de consumo #}
   <div class="card">
     <div class="card-body">
       <div class="flex items-center justify-between mb-3">
         <div>
-          <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">Anomalias de consumo</h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Produtos com consumo acelerado: estoque zera em &le; 7 dias.</p>
+          <h2 class="text-base font-semibold text-gray-100">Anomalias de consumo</h2>
+          <p class="text-xs text-surface-800">Produtos com consumo acelerado: estoque zera em ≤ 7 dias.</p>
         </div>
         {% if anomalias_count %}<span class="badge-warning">{{ anomalias_count }}</span>{% endif %}
       </div>
       {% if anomalias %}
         <ul class="space-y-3">
           {% for p, dias, consumo in anomalias %}
-            <li class="flex items-start justify-between gap-2 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0">
+            <li class="flex items-start justify-between gap-2 border-b border-surface-400 pb-2 last:border-0">
               <div class="min-w-0">
-                <a href="{% url 'core:produto_detail' p.pk %}" class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-emerald-700 dark:text-emerald-300">{{ p.nome }}</a>
-                <div class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Consumo médio: {{ consumo|floatformat:2 }} {{ p.unidade_medida }}/dia</div>
+                <a href="{% url 'core:produto_detail' p.pk %}" class="text-sm font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ p.nome }}</a>
+                <div class="text-xs text-surface-800">Consumo médio: {{ consumo|floatformat:2 }} {{ p.unidade_medida }}/dia</div>
               </div>
               <span class="badge-danger whitespace-nowrap">{{ dias }} dia{{ dias|pluralize:"s" }}</span>
             </li>
           {% endfor %}
         </ul>
       {% else %}
-        <div class="rounded-md bg-emerald-50 dark:bg-emerald-900/30 p-4 text-sm text-emerald-800">Nenhuma anomalia detectada.</div>
+        <div class="rounded-md bg-emerald-900/20 border border-emerald-800/30 p-4 text-sm text-emerald-400">Nenhuma anomalia detectada.</div>
       {% endif %}
     </div>
   </div>
 
-  {# ============== Estoque baixo ============== #}
+  {# Estoque baixo #}
   <div class="card">
     <div class="card-body">
       <div class="flex items-center justify-between mb-3">
         <div>
-          <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">Estoque abaixo do mínimo</h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Produtos cuja quantidade atual é &le; ao mínimo cadastrado.</p>
+          <h2 class="text-base font-semibold text-gray-100">Estoque abaixo do mínimo</h2>
+          <p class="text-xs text-surface-800">Produtos cuja quantidade atual é ≤ ao mínimo cadastrado.</p>
         </div>
         {% if estoque_baixo_count %}<span class="badge-warning">{{ estoque_baixo_count }}</span>{% endif %}
       </div>
       {% if estoque_baixo %}
         <ul class="space-y-3">
           {% for p in estoque_baixo %}
-            <li class="flex items-start justify-between gap-2 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0">
+            <li class="flex items-start justify-between gap-2 border-b border-surface-400 pb-2 last:border-0">
               <div class="min-w-0">
-                <a href="{% url 'core:produto_detail' p.pk %}" class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-emerald-700 dark:text-emerald-300">{{ p.nome }}</a>
-                <div class="text-xs text-amber-700 dark:text-amber-300">
+                <a href="{% url 'core:produto_detail' p.pk %}" class="text-sm font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ p.nome }}</a>
+                <div class="text-xs text-amber-400">
                   {{ p.quantidade_atual }} / {{ p.estoque_minimo }} {{ p.unidade_medida }}
                 </div>
               </div>
-              <a href="{% url 'stock:entrada_create' %}?produto={{ p.pk }}" class="text-xs text-emerald-700 dark:text-emerald-300 hover:underline whitespace-nowrap">Repor</a>
+              <a href="{% url 'stock:entrada_create' %}?produto={{ p.pk }}" class="text-xs text-emerald-400 hover:text-emerald-300 hover:underline whitespace-nowrap">Repor</a>
             </li>
           {% endfor %}
         </ul>
       {% else %}
-        <div class="rounded-md bg-emerald-50 dark:bg-emerald-900/30 p-4 text-sm text-emerald-800">Todos os estoques estão acima do mínimo.</div>
+        <div class="rounded-md bg-emerald-900/20 border border-emerald-800/30 p-4 text-sm text-emerald-400">Todos os estoques estão acima do mínimo.</div>
       {% endif %}
     </div>
   </div>
 </div>
 
-{# ============== Excesso de estoque ============== #}
+{# Excesso de estoque #}
 <div class="card mt-4">
   <div class="card-body">
     <div class="flex items-center justify-between mb-3">
       <div>
-        <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">Excesso de estoque</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Produtos com quantidade acima de 120% do estoque ideal. Considere revisar compras ou promoções.</p>
+        <h2 class="text-base font-semibold text-gray-100">Excesso de estoque</h2>
+        <p class="text-xs text-surface-800">Produtos com quantidade acima de 120% do estoque ideal. Considere revisar compras ou promoções.</p>
       </div>
       {% if excessos_count %}<span class="badge-info">{{ excessos_count }} · R$ {{ valor_total_excesso|floatformat:2 }}</span>{% endif %}
     </div>
     {% if excessos %}
       <div class="overflow-x-auto -mx-6">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-900">
+        <table class="min-w-full divide-y divide-surface-400">
+          <thead class="bg-surface-100">
             <tr>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</th>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Categoria</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Estoque</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Ideal</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Excedente</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Produto</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Categoria</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Estoque</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Ideal</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Excedente</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+          <tbody class="divide-y divide-surface-400 bg-surface-200">
             {% for p, excedente in excessos %}
-              <tr class="hover:bg-gray-50 dark:bg-gray-900">
+              <tr class="hover:bg-surface-300 transition-colors">
                 <td class="px-6 py-2 text-sm">
-                  <a href="{% url 'core:produto_detail' p.pk %}" class="font-medium text-gray-900 dark:text-gray-100 hover:text-emerald-700 dark:text-emerald-300">{{ p.nome }}</a>
+                  <a href="{% url 'core:produto_detail' p.pk %}" class="font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ p.nome }}</a>
                 </td>
-                <td class="px-6 py-2 text-sm text-gray-700 dark:text-gray-200">{{ p.categoria.nome }}</td>
-                <td class="px-6 py-2 text-sm text-right text-gray-700 dark:text-gray-200 font-mono">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
-                <td class="px-6 py-2 text-sm text-right text-gray-700 dark:text-gray-200 font-mono">{{ p.estoque_ideal }} {{ p.unidade_medida }}</td>
-                <td class="px-6 py-2 text-sm text-right font-mono text-blue-700 dark:text-blue-300">
+                <td class="px-6 py-2 text-sm text-gray-400">{{ p.categoria.nome }}</td>
+                <td class="px-6 py-2 text-sm text-right text-gray-400 font-mono">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
+                <td class="px-6 py-2 text-sm text-right text-gray-400 font-mono">{{ p.estoque_ideal }} {{ p.unidade_medida }}</td>
+                <td class="px-6 py-2 text-sm text-right font-mono text-blue-400">
                   +{{ excedente }} {{ p.unidade_medida }}
                 </td>
               </tr>
@@ -267,7 +267,7 @@
         </table>
       </div>
     {% else %}
-      <div class="rounded-md bg-emerald-50 dark:bg-emerald-900/30 p-4 text-sm text-emerald-800">Nenhum produto em excesso.</div>
+      <div class="rounded-md bg-emerald-900/20 border border-emerald-800/30 p-4 text-sm text-emerald-400">Nenhum produto em excesso.</div>
     {% endif %}
   </div>
 </div>

@@ -3,9 +3,9 @@
 
 {% block content %}
 <div class="mb-6">
-  <a href="{% url 'stock:home' %}" class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200">← Movimentações</a>
-  <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">{{ titulo }}</h1>
-  <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+  <a href="{% url 'stock:home' %}" class="text-sm text-surface-800 hover:text-gray-300">← Movimentações</a>
+  <h1 class="mt-2 text-2xl font-bold text-gray-100">{{ titulo }}</h1>
+  <p class="text-sm text-surface-800">
     Use para corrigir divergências entre o estoque físico e o sistema.
     O ajuste é registrado como movimentação com motivo identificado.
   </p>
@@ -15,57 +15,57 @@
   <form method="post" class="space-y-6">
     {% csrf_token %}
     {% if form.non_field_errors %}
-      <div class="rounded-md bg-red-50 dark:bg-red-900/30 border border-red-200 px-4 py-3 text-sm text-red-800">{{ form.non_field_errors|join:" " }}</div>
+      <div class="rounded-md bg-red-900/20 border border-red-800/30 px-4 py-3 text-sm text-red-400">{{ form.non_field_errors|join:" " }}</div>
     {% endif %}
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Produto *</label>
+      <label class="block text-sm font-medium text-gray-300">Produto *</label>
       {{ form.produto }}
-      {% if form.produto.errors %}<p class="mt-1 text-xs text-red-600">{{ form.produto.errors|join:" " }}</p>{% endif %}
+      {% if form.produto.errors %}<p class="mt-1 text-xs text-red-400">{{ form.produto.errors|join:" " }}</p>{% endif %}
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Direção do ajuste *</label>
+      <label class="block text-sm font-medium text-gray-300 mb-2">Direção do ajuste *</label>
       <div class="space-y-2">
         {% for radio in form.direcao %}
-          <label class="flex items-start gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:bg-gray-900 cursor-pointer">
+          <label class="flex items-start gap-3 p-3 border border-surface-400 rounded-md hover:bg-surface-300 cursor-pointer">
             {{ radio.tag }}
             <span class="text-sm">
-              <span class="font-medium text-gray-900 dark:text-gray-100">{{ radio.choice_label }}</span>
+              <span class="font-medium text-gray-300">{{ radio.choice_label }}</span>
             </span>
           </label>
         {% endfor %}
       </div>
-      {% if form.direcao.errors %}<p class="mt-1 text-xs text-red-600">{{ form.direcao.errors|join:" " }}</p>{% endif %}
+      {% if form.direcao.errors %}<p class="mt-1 text-xs text-red-400">{{ form.direcao.errors|join:" " }}</p>{% endif %}
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Quantidade *</label>
+        <label class="block text-sm font-medium text-gray-300">Quantidade *</label>
         {{ form.quantidade }}
-        {% if form.quantidade.errors %}<p class="mt-1 text-xs text-red-600">{{ form.quantidade.errors|join:" " }}</p>{% endif %}
+        {% if form.quantidade.errors %}<p class="mt-1 text-xs text-red-400">{{ form.quantidade.errors|join:" " }}</p>{% endif %}
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Motivo *</label>
+        <label class="block text-sm font-medium text-gray-300">Motivo *</label>
         {{ form.motivo }}
       </div>
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Lote (para saída)</label>
+      <label class="block text-sm font-medium text-gray-300">Lote (para saída)</label>
       {{ form.lote }}
-      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Obrigatório ao remover estoque. Ignorado em ajustes de entrada.</p>
-      {% if form.lote.errors %}<p class="mt-1 text-xs text-red-600">{{ form.lote.errors|join:" " }}</p>{% endif %}
+      <p class="mt-1 text-xs text-surface-800">Obrigatório ao remover estoque. Ignorado em ajustes de entrada.</p>
+      {% if form.lote.errors %}<p class="mt-1 text-xs text-red-400">{{ form.lote.errors|join:" " }}</p>{% endif %}
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Justificativa *</label>
+      <label class="block text-sm font-medium text-gray-300">Justificativa *</label>
       {{ form.observacoes }}
-      {% if form.observacoes.errors %}<p class="mt-1 text-xs text-red-600">{{ form.observacoes.errors|join:" " }}</p>{% endif %}
-      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Detalhe o motivo. Este texto será registrado na auditoria.</p>
+      {% if form.observacoes.errors %}<p class="mt-1 text-xs text-red-400">{{ form.observacoes.errors|join:" " }}</p>{% endif %}
+      <p class="mt-1 text-xs text-surface-800">Detalhe o motivo. Este texto será registrado na auditoria.</p>
     </div>
 
-    <div class="flex justify-end gap-2 pt-4 border-t border-gray-100 dark:border-gray-700">
+    <div class="flex justify-end gap-2 pt-4 border-t border-surface-400">
       <a href="{% url 'stock:home' %}" class="btn-secondary">Cancelar</a>
       <button type="submit" class="btn-primary">Registrar ajuste</button>
     </div>

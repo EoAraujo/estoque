@@ -3,27 +3,27 @@
 
 {% block content %}
 <div class="mb-6">
-  <a href="{% url 'accounts:usuario_list' %}" class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200">← Usuários</a>
-  <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">Redefinir senha</h1>
-  <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Usuário: <span class="font-mono">{{ obj.username }}</span></p>
+  <a href="{% url 'accounts:usuario_list' %}" class="text-sm text-surface-800 hover:text-gray-300">← Usuários</a>
+  <h1 class="mt-2 text-2xl font-bold text-gray-100">Redefinir senha</h1>
+  <p class="text-sm text-surface-800">Usuário: <span class="font-mono text-gray-400">{{ obj.username }}</span></p>
 </div>
 
-<div class="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-sm ring-1 ring-gray-100 max-w-md">
+<div class="card p-6 max-w-md">
   <form method="post" class="space-y-4">
     {% csrf_token %}
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nova senha</label>
+      <label class="block text-sm font-medium text-gray-300">Nova senha</label>
       {{ form.nova_senha1 }}
-      {% if form.nova_senha1.errors %}<p class="mt-1 text-xs text-red-600">{{ form.nova_senha1.errors|join:" " }}</p>{% endif %}
+      {% if form.nova_senha1.errors %}<p class="mt-1 text-xs text-red-400">{{ form.nova_senha1.errors|join:" " }}</p>{% endif %}
     </div>
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Confirme a nova senha</label>
+      <label class="block text-sm font-medium text-gray-300">Confirme a nova senha</label>
       {{ form.nova_senha2 }}
-      {% if form.nova_senha2.errors %}<p class="mt-1 text-xs text-red-600">{{ form.nova_senha2.errors|join:" " }}</p>{% endif %}
+      {% if form.nova_senha2.errors %}<p class="mt-1 text-xs text-red-400">{{ form.nova_senha2.errors|join:" " }}</p>{% endif %}
     </div>
     <div class="flex justify-end gap-2 pt-2">
-      <a href="{% url 'accounts:usuario_list' %}" class="rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:bg-gray-900">Cancelar</a>
-      <button type="submit" class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Redefinir</button>
+      <a href="{% url 'accounts:usuario_list' %}" class="btn-secondary">Cancelar</a>
+      <button type="submit" class="btn-primary">Redefinir</button>
     </div>
   </form>
 </div>

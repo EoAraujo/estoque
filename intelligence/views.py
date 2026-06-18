@@ -11,6 +11,7 @@ Renderiza a página única de inteligência com seções de:
 from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 
@@ -143,3 +144,41 @@ def intelligence_home(request):
         "anomalias_count": len(anomalias),
     }
     return render(request, "intelligence/home.html", context)
+
+
+@login_required
+def api_alertas(request):
+    """API: retorna alertas ativos (não lidos, não resolvidos) para o header."""
+    from stock.models import Alerta
+
+    alertas = (
+        Alerta.objects
+        .filter(resolvido=False)
+        .select_related("produto", "lote")
+        .order_by("-created_at")[:30]
+    )
+
+    data = []
+    for a in alertas:
+        data.append({
+            "id": a.pk,
+            "tipo": a.tipo,
+            "nivel": a.nivel,
+            "titulo": a.titulo,
+            "mensagem": a.mensagem,
+            "tipo_display": a.get_tipo_display(),
+            "nivel_display": a.get_nivel_display(),
+            "produto": a.produto.nome if a.produto else None,
+            "lote": str(a.lote) if a.lote else None,
+            "created_at": a.created_at.isoformat() if a.created_at else None,
+        })
+
+    return JsonResponse({"alertas": data, "total": len(data)})
+
+
+@login_required
+def api_gerar_alertas(request):
+    """API: dispara geração de alertas. Retorna quantidade criada."""
+    from .analises import gerar_alertas
+    criados = gerar_alertas()
+    return JsonResponse({"criados": criados})

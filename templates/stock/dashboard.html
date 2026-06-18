@@ -4,8 +4,8 @@
 {% block content %}
 <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
   <div>
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Movimentações de estoque</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Entradas, saídas, ajustes e histórico completo.</p>
+    <h1 class="text-2xl font-bold text-gray-100">Movimentações de estoque</h1>
+    <p class="text-sm text-surface-800">Entradas, saídas, ajustes e histórico completo.</p>
   </div>
   <div class="flex flex-wrap gap-2">
     <a href="{% url 'stock:entrada_create' %}" class="btn-primary">
@@ -24,76 +24,76 @@
 </div>
 
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Entradas hoje</p>
-    <p class="mt-1 text-3xl font-semibold text-emerald-600">+{{ entradas_hoje }}</p>
+  <div class="stat-card">
+    <p class="stat-label">Entradas hoje</p>
+    <p class="mt-1 text-3xl font-semibold text-emerald-400">+{{ entradas_hoje }}</p>
   </div>
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Saídas hoje</p>
-    <p class="mt-1 text-3xl font-semibold text-red-600">-{{ saidas_hoje }}</p>
+  <div class="stat-card">
+    <p class="stat-label">Saídas hoje</p>
+    <p class="mt-1 text-3xl font-semibold text-red-400">-{{ saidas_hoje }}</p>
   </div>
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Valor total em estoque</p>
-    <p class="mt-1 text-2xl font-semibold text-gray-900 dark:text-gray-100">R$ {{ valor_total_estoque|floatformat:2 }}</p>
+  <div class="stat-card">
+    <p class="stat-label">Valor total em estoque</p>
+    <p class="mt-1 text-2xl font-semibold text-gray-100">R$ {{ valor_total_estoque|floatformat:2 }}</p>
   </div>
-  <div class="card card-body">
-    <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Cancelamentos (30d)</p>
-    <p class="mt-1 text-3xl font-semibold text-gray-900 dark:text-gray-100">{{ cancelamentos_30d }}</p>
+  <div class="stat-card">
+    <p class="stat-label">Cancelamentos (30d)</p>
+    <p class="mt-1 text-3xl font-semibold text-gray-100">{{ cancelamentos_30d }}</p>
   </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
   <div class="card card-body lg:col-span-2">
-    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Últimas movimentações</h2>
+    <h2 class="text-base font-semibold text-gray-100 mb-3">Últimas movimentações</h2>
     {% if ultimas %}
       <div class="overflow-x-auto -mx-6">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-900">
+        <table class="min-w-full divide-y divide-surface-400">
+          <thead class="bg-surface-100">
             <tr>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Quando</th>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Tipo</th>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</th>
-              <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Qtd</th>
-              <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Motivo</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Quando</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Tipo</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Produto</th>
+              <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Qtd</th>
+              <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Motivo</th>
               <th class="px-6 py-2"></th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+          <tbody class="divide-y divide-surface-400 bg-surface-200">
             {% for m in ultimas %}
-              <tr class="hover:bg-gray-50 dark:bg-gray-900">
-                <td class="whitespace-nowrap px-6 py-2 text-sm text-gray-700 dark:text-gray-200">{{ m.data_movimento|date:"d/m H:i" }}</td>
+              <tr class="hover:bg-surface-300 transition-colors">
+                <td class="whitespace-nowrap px-6 py-2 text-sm text-gray-400">{{ m.data_movimento|date:"d/m H:i" }}</td>
                 <td class="whitespace-nowrap px-6 py-2 text-sm">
-                  {% if m.tipo == "ENTRADA" %}<span class="badge-success">Entrada</span>
-                  {% else %}<span class="badge-danger">Saída</span>{% endif %}
+                  {% if m.tipo == "ENTRADA" %}<span class="badge-success badge-dot">Entrada</span>
+                  {% else %}<span class="badge-danger badge-dot">Saída</span>{% endif %}
                 </td>
-                <td class="px-6 py-2 text-sm text-gray-900 dark:text-gray-100">{{ m.produto.nome }}</td>
+                <td class="px-6 py-2 text-sm text-gray-300">{{ m.produto.nome }}</td>
                 <td class="whitespace-nowrap px-6 py-2 text-right text-sm font-mono">
-                  <span class="{% if m.tipo == 'ENTRADA' %}text-emerald-700 dark:text-emerald-300{% else %}text-red-700 dark:text-red-300{% endif %}">
+                  <span class="{% if m.tipo == 'ENTRADA' %}text-emerald-400{% else %}text-red-400{% endif %}">
                     {% if m.tipo == 'ENTRADA' %}+{% else %}-{% endif %}{{ m.quantidade }} {{ m.produto.unidade_medida }}
                   </span>
                 </td>
-                <td class="px-6 py-2 text-sm text-gray-600 dark:text-gray-300">{{ m.get_motivo_display }}</td>
-                <td class="px-6 py-2 text-right text-sm"><a href="{% url 'stock:movimento_detail' m.pk %}" class="text-emerald-700 dark:text-emerald-300 hover:underline">Ver</a></td>
+                <td class="px-6 py-2 text-sm text-gray-400">{{ m.get_motivo_display }}</td>
+                <td class="px-6 py-2 text-right text-sm"><a href="{% url 'stock:movimento_detail' m.pk %}" class="text-emerald-400 hover:text-emerald-300 hover:underline">Ver</a></td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-      <a href="{% url 'stock:movimento_list' %}" class="mt-3 inline-block text-sm text-emerald-700 dark:text-emerald-300 hover:underline">Ver todas →</a>
+      <a href="{% url 'stock:movimento_list' %}" class="mt-3 inline-block text-sm text-emerald-400 hover:text-emerald-300 hover:underline">Ver todas →</a>
     {% else %}
-      <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Nenhuma movimentação registrada ainda.</p>
+      <p class="text-sm text-surface-800">Nenhuma movimentação registrada ainda.</p>
     {% endif %}
   </div>
 
   <div class="space-y-4">
     {% if lotes_vencidos %}
     <div class="card card-body border-l-4 border-red-500">
-      <h2 class="text-base font-semibold text-red-700 dark:text-red-300 mb-2">Produtos vencidos</h2>
+      <h2 class="text-base font-semibold text-red-400 mb-2">Produtos vencidos</h2>
       <ul class="space-y-2">
         {% for l in lotes_vencidos %}
           <li class="text-sm">
-            <a href="{% url 'core:produto_detail' l.produto.pk %}" class="font-medium text-gray-900 dark:text-gray-100 hover:underline">{{ l.produto.nome }}</a>
-            <div class="text-xs text-red-700 dark:text-red-300">Lote {{ l.numero_lote|default:"—" }} • {{ l.quantidade_atual }} {{ l.produto.unidade_medida }} • Venceu em {{ l.data_validade|date:"d/m/Y" }}</div>
+            <a href="{% url 'core:produto_detail' l.produto.pk %}" class="font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ l.produto.nome }}</a>
+            <div class="text-xs text-red-400">Lote {{ l.numero_lote|default:"—" }} • {{ l.quantidade_atual }} {{ l.produto.unidade_medida }} • Venceu em {{ l.data_validade|date:"d/m/Y" }}</div>
           </li>
         {% endfor %}
       </ul>
@@ -102,12 +102,12 @@
 
     {% if lotes_vencendo %}
     <div class="card card-body border-l-4 border-amber-500">
-      <h2 class="text-base font-semibold text-amber-700 dark:text-amber-300 mb-2">Vencendo em 30 dias</h2>
+      <h2 class="text-base font-semibold text-amber-400 mb-2">Vencendo em 30 dias</h2>
       <ul class="space-y-2">
         {% for l in lotes_vencendo %}
           <li class="text-sm">
-            <a href="{% url 'core:produto_detail' l.produto.pk %}" class="font-medium text-gray-900 dark:text-gray-100 hover:underline">{{ l.produto.nome }}</a>
-            <div class="text-xs text-amber-700 dark:text-amber-300">Lote {{ l.numero_lote|default:"—" }} • {{ l.quantidade_atual }} {{ l.produto.unidade_medida }} • Vence em {{ l.data_validade|date:"d/m/Y" }}</div>
+            <a href="{% url 'core:produto_detail' l.produto.pk %}" class="font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ l.produto.nome }}</a>
+            <div class="text-xs text-amber-400">Lote {{ l.numero_lote|default:"—" }} • {{ l.quantidade_atual }} {{ l.produto.unidade_medida }} • Vence em {{ l.data_validade|date:"d/m/Y" }}</div>
           </li>
         {% endfor %}
       </ul>
@@ -118,24 +118,24 @@
 
 {% if top_produtos %}
 <div class="card card-body">
-  <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Top 5 produtos por valor em estoque</h2>
+  <h2 class="text-base font-semibold text-gray-100 mb-3">Top 5 produtos por valor em estoque</h2>
   <div class="overflow-x-auto -mx-6">
-    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-      <thead class="bg-gray-50 dark:bg-gray-900">
+    <table class="min-w-full divide-y divide-surface-400">
+      <thead class="bg-surface-100">
         <tr>
-          <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">#</th>
-          <th class="px-6 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Produto</th>
-          <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Qtd atual</th>
-          <th class="px-6 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 dark:text-gray-500">Valor estimado</th>
+          <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">#</th>
+          <th class="px-6 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Produto</th>
+          <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Qtd atual</th>
+          <th class="px-6 py-2 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Valor estimado</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+      <tbody class="divide-y divide-surface-400 bg-surface-200">
         {% for p, valor in top_produtos %}
-          <tr class="hover:bg-gray-50 dark:bg-gray-900">
-            <td class="px-6 py-2 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ forloop.counter }}</td>
-            <td class="px-6 py-2 text-sm font-medium text-gray-900 dark:text-gray-100"><a href="{% url 'core:produto_detail' p.pk %}" class="hover:underline">{{ p.nome }}</a></td>
-            <td class="px-6 py-2 text-right text-sm font-mono">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
-            <td class="px-6 py-2 text-right text-sm font-mono">R$ {{ valor|floatformat:2 }}</td>
+          <tr class="hover:bg-surface-300 transition-colors">
+            <td class="px-6 py-2 text-sm text-surface-800">{{ forloop.counter }}</td>
+            <td class="px-6 py-2 text-sm font-medium text-gray-300"><a href="{% url 'core:produto_detail' p.pk %}" class="hover:text-emerald-400 hover:underline">{{ p.nome }}</a></td>
+            <td class="px-6 py-2 text-right text-sm font-mono text-gray-400">{{ p.quantidade_atual }} {{ p.unidade_medida }}</td>
+            <td class="px-6 py-2 text-right text-sm font-mono text-gray-300">R$ {{ valor|floatformat:2 }}</td>
           </tr>
         {% endfor %}
       </tbody>

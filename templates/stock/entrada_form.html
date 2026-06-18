@@ -3,76 +3,76 @@
 
 {% block content %}
 <div class="mb-6">
-  <a href="{% url 'stock:home' %}" class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200">← Movimentações</a>
-  <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">{{ titulo|default:"Entrada" }}</h1>
-  <p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Registre uma compra, devolução ou estoque inicial.</p>
+  <a href="{% url 'stock:home' %}" class="text-sm text-surface-800 hover:text-gray-300">← Movimentações</a>
+  <h1 class="mt-2 text-2xl font-bold text-gray-100">{{ titulo|default:"Entrada" }}</h1>
+  <p class="text-sm text-surface-800">Registre uma compra, devolução ou estoque inicial.</p>
 </div>
 
 <div class="card card-body max-w-3xl">
   <form method="post" class="space-y-4">
     {% csrf_token %}
     {% if form.non_field_errors %}
-      <div class="rounded-md bg-red-50 dark:bg-red-900/30 border border-red-200 px-4 py-3 text-sm text-red-800">{{ form.non_field_errors|join:" " }}</div>
+      <div class="rounded-md bg-red-900/20 border border-red-800/30 px-4 py-3 text-sm text-red-400">{{ form.non_field_errors|join:" " }}</div>
     {% endif %}
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Produto *</label>
+        <label class="block text-sm font-medium text-gray-300">Produto *</label>
         {{ form.produto }}
-        {% if form.produto.errors %}<p class="mt-1 text-xs text-red-600">{{ form.produto.errors|join:" " }}</p>{% endif %}
+        {% if form.produto.errors %}<p class="mt-1 text-xs text-red-400">{{ form.produto.errors|join:" " }}</p>{% endif %}
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Quantidade *</label>
+        <label class="block text-sm font-medium text-gray-300">Quantidade *</label>
         {{ form.quantidade }}
-        {% if form.quantidade.errors %}<p class="mt-1 text-xs text-red-600">{{ form.quantidade.errors|join:" " }}</p>{% endif %}
+        {% if form.quantidade.errors %}<p class="mt-1 text-xs text-red-400">{{ form.quantidade.errors|join:" " }}</p>{% endif %}
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Valor unitário (R$)</label>
+        <label class="block text-sm font-medium text-gray-300">Valor unitário (R$)</label>
         {{ form.valor_unitario }}
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Data de entrada</label>
+        <label class="block text-sm font-medium text-gray-300">Data de entrada</label>
         {{ form.data_entrada }}
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Padrão: hoje</p>
+        <p class="mt-1 text-xs text-surface-800">Padrão: hoje</p>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Motivo</label>
+        <label class="block text-sm font-medium text-gray-300">Motivo</label>
         {{ form.motivo }}
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Fornecedor</label>
+        <label class="block text-sm font-medium text-gray-300">Fornecedor</label>
         {{ form.fornecedor }}
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nota fiscal</label>
+        <label class="block text-sm font-medium text-gray-300">Nota fiscal</label>
         {{ form.nota_fiscal }}
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Número do lote</label>
+        <label class="block text-sm font-medium text-gray-300">Número do lote</label>
         {{ form.numero_lote }}
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Data de fabricação</label>
+        <label class="block text-sm font-medium text-gray-300">Data de fabricação</label>
         {{ form.data_fabricacao }}
       </div>
       <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Data de validade *</label>
+        <label class="block text-sm font-medium text-gray-300">Data de validade *</label>
         {{ form.data_validade }}
-        {% if form.data_validade.errors %}<p class="mt-1 text-xs text-red-600">{{ form.data_validade.errors|join:" " }}</p>{% endif %}
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Obrigatória para produtos que controlam validade.</p>
+        {% if form.data_validade.errors %}<p class="mt-1 text-xs text-red-400">{{ form.data_validade.errors|join:" " }}</p>{% endif %}
+        <p class="mt-1 text-xs text-surface-800">Obrigatória para produtos que controlam validade.</p>
       </div>
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Observações</label>
+      <label class="block text-sm font-medium text-gray-300">Observações</label>
       {{ form.observacoes }}
     </div>
 
-    <div class="flex justify-end gap-2 pt-4 border-t border-gray-100 dark:border-gray-700">
+    <div class="flex justify-end gap-2 pt-4 border-t border-surface-400">
       <a href="{% url 'stock:home' %}" class="btn-secondary">Cancelar</a>
       <button type="submit" class="btn-primary">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>

@@ -75,5 +75,119 @@ def quantidade_recomendada_compra(produto: Produto) -> Decimal:
 
 # Implementação completa em Fase 2
 def gerar_alertas():
-    """Percorre produtos/lotes e gera alertas."""
-    raise NotImplementedError("Motor de alertas será implementado na Fase 2.")
+    """
+    Percorre produtos ativos e gera Alerta quando necessário.
+    Retorna quantidade de alertas criados.
+    """
+    from stock.models import Alerta
+    from datetime import timedelta
+
+    config = ConfiguracaoSingleton.get()
+    hoje = timezone.localdate()
+    criados = 0
+
+    produtos = Produto.objects.filter(ativo=True).select_related("categoria")
+
+    for p in produtos:
+        # --- Estoque baixo ---
+        if p.estoque_minimo and p.estoque_minimo > 0:
+            if p.quantidade_atual <= p.estoque_minimo:
+                nivel = "CRITICO" if p.quantidade_atual <= 0 else "URGENTE"
+                existe = Alerta.objects.filter(
+                    produto=p, tipo="ESTOQUE_MIN", resolvido=False
+                ).exists()
+                if not existe:
+                    Alerta.objects.create(
+                        tipo="ESTOQUE_MIN",
+                        nivel=nivel,
+                        produto=p,
+                        titulo=f"Estoque baixo: {p.nome}",
+                        mensagem=f"Estoque atual: {p.quantidade_atual} {p.unidade_medida} (mínimo: {p.estoque_minimo})",
+                        dados={"quantidade_atual": float(p.quantidade_atual), "estoque_minimo": float(p.estoque_minimo)},
+                    )
+                    criados += 1
+
+        # --- Esgotado ---
+        if p.quantidade_atual <= 0:
+            existe = Alerta.objects.filter(
+                produto=p, tipo="ESGOTADO", resolvido=False
+            ).exists()
+            if not existe:
+                Alerta.objects.create(
+                    tipo="ESGOTADO",
+                    nivel="CRITICO",
+                    produto=p,
+                    titulo=f"Esgotado: {p.nome}",
+                    mensagem=f"Produto sem estoque. Unidade: {p.unidade_medida}",
+                )
+                criados += 1
+
+        # --- Ruptura iminente ---
+        dias = dias_restantes(p)
+        if dias is not None and dias <= config.alerta_vencimento_30:
+            nivel = "CRITICO" if dias <= 3 else "URGENTE" if dias <= 7 else "ATENCAO"
+            existe = Alerta.objects.filter(
+                produto=p, tipo="RUPTURA", resolvido=False
+            ).exists()
+            if not existe:
+                Alerta.objects.create(
+                    tipo="RUPTURA",
+                    nivel=nivel,
+                    produto=p,
+                    titulo=f"Ruptura em {int(dias)} dias: {p.nome}",
+                    mensagem=f"Estoque atual: {p.quantidade_atual} {p.unidade_medida}. Consumo médio: {consumo_medio(p):.2f}/dia",
+                    dados={"dias_restantes": float(dias)},
+                )
+                criados += 1
+
+        # --- Excesso ---
+        if produto_em_excesso(p):
+            existe = Alerta.objects.filter(
+                produto=p, tipo="EXCESSO", resolvido=False
+            ).exists()
+            if not existe:
+                excedente = p.quantidade_atual - (p.estoque_ideal or 0)
+                Alerta.objects.create(
+                    tipo="EXCESSO",
+                    nivel="INFO",
+                    produto=p,
+                    titulo=f"Excesso: {p.nome}",
+                    mensagem=f"Estoque: {p.quantidade_atual} {p.unidade_medida} (ideal: {p.estoque_ideal}). Excedente: {excedente}",
+                    dados={"excedente": float(excedente)},
+                )
+                criados += 1
+
+        # --- Lotes vencendo ---
+        from stock.models import Lote
+        lotes_vencendo = Lote.objects.filter(
+            produto=p, ativo=True, quantidade_atual__gt=0,
+            data_validade__isnull=False,
+            data_validade__gte=hoje,
+            data_validade__lte=hoje + timedelta(days=config.alerta_vencimento_30),
+        )
+        for lote in lotes_vencendo:
+            dias_v = (lote.data_validade - hoje).days
+            tipo_v = (
+                "VENCIDO" if dias_v < 0 else
+                "VENCIMENTO_3" if dias_v <= 3 else
+                "VENCIMENTO_7" if dias_v <= 7 else
+                "VENCIMENTO_15" if dias_v <= 15 else
+                "VENCIMENTO_30"
+            )
+            nivel_v = "CRITICO" if dias_v <= 3 else "URGENTE" if dias_v <= 7 else "ATENCAO"
+            existe = Alerta.objects.filter(
+                produto=p, lote=lote, tipo=tipo_v, resolvido=False
+            ).exists()
+            if not existe:
+                Alerta.objects.create(
+                    tipo=tipo_v,
+                    nivel=nivel_v,
+                    produto=p,
+                    lote=lote,
+                    titulo=f"Lote vencendo: {p.nome}",
+                    mensagem=f"Lote {lote.numero_lote or 's/n'} vence em {lote.data_validade.strftime('%d/%m/%Y')} ({dias_v} dias). Qtd: {lote.quantidade_atual}",
+                    dados={"lote_id": lote.pk, "dias_para_vencer": dias_v},
+                )
+                criados += 1
+
+    return criados

@@ -3,38 +3,38 @@
 
 {% block content %}
 <div class="mb-6">
-  <a href="{% url 'stock:movimento_detail' m.pk %}" class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200">← Movimento</a>
-  <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">Cancelar movimentação</h1>
+  <a href="{% url 'stock:movimento_detail' m.pk %}" class="text-sm text-surface-800 hover:text-gray-300">← Movimento</a>
+  <h1 class="mt-2 text-2xl font-bold text-gray-100">Cancelar movimentação</h1>
 </div>
 
 <div class="max-w-2xl space-y-4">
-  <div class="card card-body bg-amber-50 dark:bg-amber-900/30 border-amber-200">
-    <h2 class="text-sm font-semibold text-amber-800 mb-2">Você está prestes a cancelar:</h2>
+  <div class="card card-body bg-amber-900/20 border border-amber-800/30">
+    <h2 class="text-sm font-semibold text-amber-400 mb-2">Você está prestes a cancelar:</h2>
     <dl class="text-sm space-y-1">
-      <div class="flex justify-between"><dt class="text-amber-700 dark:text-amber-300">Tipo:</dt><dd class="font-medium text-amber-900">{{ m.get_tipo_display }} — {{ m.get_motivo_display }}</dd></div>
-      <div class="flex justify-between"><dt class="text-amber-700 dark:text-amber-300">Produto:</dt><dd class="font-medium text-amber-900">{{ m.produto.nome }}</dd></div>
-      <div class="flex justify-between"><dt class="text-amber-700 dark:text-amber-300">Quantidade:</dt><dd class="font-mono font-semibold {% if m.tipo == 'ENTRADA' %}text-emerald-700 dark:text-emerald-300{% else %}text-red-700 dark:text-red-300{% endif %}">
+      <div class="flex justify-between"><dt class="text-amber-400">Tipo:</dt><dd class="font-medium text-gray-300">{{ m.get_tipo_display }} — {{ m.get_motivo_display }}</dd></div>
+      <div class="flex justify-between"><dt class="text-amber-400">Produto:</dt><dd class="font-medium text-gray-300">{{ m.produto.nome }}</dd></div>
+      <div class="flex justify-between"><dt class="text-amber-400">Quantidade:</dt><dd class="font-mono font-semibold {% if m.tipo == 'ENTRADA' %}text-emerald-400{% else %}text-red-400{% endif %}">
         {% if m.tipo == 'ENTRADA' %}+{% else %}-{% endif %}{{ m.quantidade }} {{ m.produto.unidade_medida }}
       </dd></div>
-      <div class="flex justify-between"><dt class="text-amber-700 dark:text-amber-300">Data:</dt><dd class="font-medium text-amber-900">{{ m.data_movimento|date:"d/m/Y H:i" }}</dd></div>
+      <div class="flex justify-between"><dt class="text-amber-400">Data:</dt><dd class="font-medium text-gray-300">{{ m.data_movimento|date:"d/m/Y H:i" }}</dd></div>
     </dl>
   </div>
 
   <div class="card card-body">
-    <p class="text-sm text-gray-700 dark:text-gray-200 mb-4">
-      <strong class="text-red-700 dark:text-red-300">Atenção:</strong> o cancelamento reverte o efeito do movimento sobre o estoque.
+    <p class="text-sm text-gray-400 mb-4">
+      <strong class="text-red-400">Atenção:</strong> o cancelamento reverte o efeito do movimento sobre o estoque.
       O registro original não será apagado, apenas marcado como cancelado e ficará visível na auditoria.
     </p>
 
     <form method="post" class="space-y-4">
       {% csrf_token %}
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Motivo do cancelamento *</label>
+        <label class="block text-sm font-medium text-gray-300">Motivo do cancelamento *</label>
         {{ form.motivo_cancelamento }}
-        {% if form.motivo_cancelamento.errors %}<p class="mt-1 text-xs text-red-600">{{ form.motivo_cancelamento.errors|join:" " }}</p>{% endif %}
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Mínimo 10 caracteres. Esta justificativa ficará registrada.</p>
+        {% if form.motivo_cancelamento.errors %}<p class="mt-1 text-xs text-red-400">{{ form.motivo_cancelamento.errors|join:" " }}</p>{% endif %}
+        <p class="mt-1 text-xs text-surface-800">Mínimo 10 caracteres. Esta justificativa ficará registrada.</p>
       </div>
-      <div class="flex justify-end gap-2 pt-4 border-t border-gray-100 dark:border-gray-700">
+      <div class="flex justify-end gap-2 pt-4 border-t border-surface-400">
         <a href="{% url 'stock:movimento_detail' m.pk %}" class="btn-secondary">Voltar</a>
         <button type="submit" class="btn-danger">Confirmar cancelamento</button>
       </div>

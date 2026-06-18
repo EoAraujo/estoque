@@ -1,18 +1,18 @@
 {% if is_paginated %}
-<nav class="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 rounded-b-xl">
+<nav class="mt-4 flex items-center justify-between border-t border-surface-400 bg-surface-200 px-4 py-3 sm:px-6 rounded-b-xl">
   <div class="hidden sm:block">
-    <p class="text-sm text-gray-700 dark:text-gray-200">
-      Mostrando <span class="font-medium">{{ page_obj.start_index }}</span> a
-      <span class="font-medium">{{ page_obj.end_index }}</span> de
-      <span class="font-medium">{{ paginator.count }}</span> resultados
+    <p class="text-sm text-gray-400">
+      Mostrando <span class="font-medium text-gray-300">{{ page_obj.start_index }}</span> a
+      <span class="font-medium text-gray-300">{{ page_obj.end_index }}</span> de
+      <span class="font-medium text-gray-300">{{ paginator.count }}</span> resultados
     </p>
   </div>
   <div class="flex flex-1 justify-between sm:justify-end gap-2">
     {% if page_obj.has_previous %}
-      <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:bg-gray-900">Anterior</a>
+      <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" class="btn-secondary">Anterior</a>
     {% endif %}
     {% if page_obj.has_next %}
-      <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:bg-gray-900">Próxima</a>
+      <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" class="btn-secondary">Próxima</a>
     {% endif %}
   </div>
 </nav>
