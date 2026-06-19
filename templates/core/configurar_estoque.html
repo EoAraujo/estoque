@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Configurar Estoque · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-100">Configurar estoque mínimo e ideal</h1>
+    <p class="text-sm text-surface-800">{{ total }} produto{{ total|pluralize:"s" }} encontrado{{ total|pluralize:"s" }}. Defina os valores mínimo e ideal para ativar alertas e inteligência.</p>
+  </div>
+</div>
+
+<div class="card mb-4 p-4">
+  <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div class="md:col-span-2">
+      <label class="block text-xs font-medium text-surface-800">Buscar produto</label>
+      <input type="text" name="busca" value="{{ busca }}" placeholder="Nome ou código..." class="form-input mt-1">
+    </div>
+    <div class="flex items-end gap-2">
+      <select name="categoria" class="form-input">
+        <option value="">Todas as categorias</option>
+        {% for c in categorias %}
+          <option value="{{ c.pk }}" {% if c.pk|stringformat:"s" == categoria_filtro %}selected{% endif %}>{{ c.nome }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn-primary">Filtrar</button>
+    </div>
+  </form>
+</div>
+
+{% if rows %}
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  {{ formset.management_form }}
+
+  <div class="overflow-hidden rounded-xl card">
+    <table class="min-w-full divide-y divide-surface-400">
+      <thead class="bg-surface-100">
+        <tr>
+          <th class="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800 w-8">#</th>
+          <th class="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Produto</th>
+          <th class="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Categoria</th>
+          <th class="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-surface-800">Unidade</th>
+          <th class="px-4 py-3 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Estoque atual</th>
+          <th class="px-4 py-3 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Mínimo</th>
+          <th class="px-4 py-3 text-right text-[11px] font-medium uppercase tracking-wider text-surface-800">Ideal</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-400 bg-surface-200">
+        {% for form, produto in rows %}
+          <tr class="hover:bg-surface-300 transition-colors">
+            <td class="px-4 py-2 text-sm text-surface-800">{{ forloop.counter }}</td>
+            <td class="px-4 py-2">
+              <a href="{% url 'core:produto_detail' produto.pk %}" class="text-sm font-medium text-gray-300 hover:text-emerald-400 transition-colors">{{ produto.nome }}</a>
+              <div class="text-xs text-surface-800 font-mono">{{ produto.codigo_interno }}</div>
+              {{ form.id }}
+            </td>
+            <td class="px-4 py-2 text-sm text-gray-400">{{ produto.categoria.nome }}</td>
+            <td class="px-4 py-2 text-sm text-gray-400">{{ produto.get_unidade_medida_display }}</td>
+            <td class="px-4 py-2 text-right text-sm font-mono text-gray-300">{{ produto.quantidade_atual }}</td>
+            <td class="px-4 py-2 text-right">
+              {{ form.estoque_minimo }}
+            </td>
+            <td class="px-4 py-2 text-right">
+              {{ form.estoque_ideal }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <a href="{% url 'core:dashboard' %}" class="btn-secondary">Cancelar</a>
+    <button type="submit" class="btn-primary">
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      Salvar alterações
+    </button>
+  </div>
+</form>
+{% else %}
+  <div class="card p-8 text-center">
+    <p class="text-surface-800">Nenhum produto encontrado com os filtros selecionados.</p>
+  </div>
+{% endif %}
+{% endblock %}

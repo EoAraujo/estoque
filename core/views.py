@@ -10,6 +10,7 @@ from django.views.generic import (
 
 from .forms import (
     CategoriaForm, FornecedorForm, ProdutoForm, ConfiguracaoForm, FiltroProdutoForm,
+    ProdutoEstoqueFormSet,
 )
 from .models import Categoria, Fornecedor, Produto, ConfiguracaoSingleton
 
@@ -418,3 +419,65 @@ class ConfiguracaoUpdateView(StaffRequiredMixin, UpdateView):
         form.instance.updated_by = self.request.user
         messages.success(self.request, "Configurações atualizadas.")
         return super().form_valid(form)
+
+
+# ============================================================================
+# Configuração em lote: Estoque Mínimo / Ideal
+# ============================================================================
+def configurar_estoque_lote(request):
+    """Tela para configurar estoque mínimo e ideal de vários produtos de uma vez."""
+    if not request.user.is_authenticated:
+        return redirect("accounts:login")
+    if not request.user.is_staff:
+        messages.error(request, "Você não tem permissão para essa ação.")
+        return redirect("core:dashboard")
+
+    from django.db.models import Q
+
+    busca = request.GET.get("busca", "").strip()
+    categoria_id = request.GET.get("categoria", "")
+
+    produtos = Produto.objects.select_related("categoria").filter(ativo=True).order_by("categoria__nome", "nome")
+
+    if busca:
+        produtos = produtos.filter(
+            Q(nome__icontains=busca) |
+            Q(codigo_interno__icontains=busca)
+        )
+    if categoria_id and categoria_id.isdigit():
+        produtos = produtos.filter(categoria_id=int(categoria_id))
+
+    if request.method == "POST":
+        formset = ProdutoEstoqueFormSet(
+            request.POST, queryset=produtos,
+            prefix="produtos",
+        )
+        if formset.is_valid():
+            count = 0
+            for form in formset:
+                if form.has_changed():
+                    form.save()
+                    count += 1
+            messages.success(
+                request,
+                f"{count} produto{'s' if count != 1 else ''} atualizado{'s' if count != 1 else ''} com sucesso.",
+            )
+            return redirect("core:configurar_estoque")
+    else:
+        formset = ProdutoEstoqueFormSet(queryset=produtos, prefix="produtos")
+
+    from .models import Categoria
+    categorias = Categoria.objects.filter(ativa=True).order_by("nome")
+
+    # Zip produtos + forms para o template
+    rows = zip(formset.forms, produtos)
+
+    context = {
+        "formset": formset,
+        "rows": list(rows),
+        "total": produtos.count(),
+        "busca": busca,
+        "categoria_filtro": categoria_id,
+        "categorias": categorias,
+    }
+    return render(request, "core/configurar_estoque.html", context)

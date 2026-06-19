@@ -114,3 +114,14 @@ class FiltroProdutoForm(forms.Form):
             widget.attrs.setdefault("class", ESTILO_CAMPO)
             if isinstance(widget, forms.CheckboxInput):
                 widget.attrs["class"] = "rounded border-gray-300 text-emerald-600"
+
+
+ProdutoEstoqueFormSet = forms.modelformset_factory(
+    Produto,
+    fields=["estoque_minimo", "estoque_ideal"],
+    extra=0,
+    widgets={
+        "estoque_minimo": forms.NumberInput(attrs={"class": ESTILO_CAMPO, "min": "0", "step": "0.01"}),
+        "estoque_ideal": forms.NumberInput(attrs={"class": ESTILO_CAMPO, "min": "0", "step": "0.01"}),
+    },
+)

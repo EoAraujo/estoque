@@ -24,4 +24,5 @@ urlpatterns = [
     path("produtos/<int:pk>/excluir/", views.ProdutoDeleteView.as_view(), name="produto_delete"),
 
     path("configuracoes/", views.ConfiguracaoUpdateView.as_view(), name="configuracao"),
+    path("configurar-estoque/", views.configurar_estoque_lote, name="configurar_estoque"),
 ]
